@@ -1,6 +1,6 @@
 "use client"
-import useSiteConfig from '@/apicalls/UseSiteConfig'
-import { useState, useRef, useEffect, createContext } from 'react'
+import useSiteConfig from '@/apicalls/useSiteConfig'
+import { useState, createContext } from 'react'
 import MapDisplay from '@/components/map/MapDisplay'
 
 export const PanelWidthContext = createContext(null)
