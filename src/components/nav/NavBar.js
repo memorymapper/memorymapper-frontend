@@ -2,7 +2,7 @@ import Link from "next/link"
 import Search from "../search/Search"
 
 async function getSiteConfig() {
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/config/')
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/config/', {cache: 'no-cache'})
 
     if (!res.ok) {
         // This will activate the closest `error.js` Error Boundary
@@ -13,7 +13,7 @@ async function getSiteConfig() {
 }
 
 async function getPages() {
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '1.0/pages/')
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '1.0/pages/', {cache: 'no-cache'})
 
     if (!res.ok) {
         throw new Error('Failed to fetch page list')
