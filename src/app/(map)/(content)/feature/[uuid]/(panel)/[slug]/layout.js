@@ -2,7 +2,7 @@ import Link from "next/link"
 
 async function getFeature(uuid) {
 
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + 'features/' + uuid + '/attachments', {cache: 'no-store'})
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/features/' + uuid + '/attachments', {cache: 'no-store'})
 
     if (!res.ok) {
         throw new Error('Failed to fetch feature')

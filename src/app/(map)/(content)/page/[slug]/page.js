@@ -2,7 +2,7 @@ import { sanitize, isSupported } from 'isomorphic-dompurify'
 
 async function getPage(slug) {
 
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + 'pages/' + slug)
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '1.0/pages/' + slug)
 
     if (!res.ok) {
         throw new Error('Failed to fetch page')

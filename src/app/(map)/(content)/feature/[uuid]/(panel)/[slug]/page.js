@@ -2,7 +2,7 @@ import { sanitize, isSupported } from 'isomorphic-dompurify'
 
 async function getAttachment(uuid, slug) {
 
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + 'features/' + uuid + '/attachments/' + slug, {cache: 'no-cache'})
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/features/' + uuid + '/attachments/' + slug, {cache: 'no-cache'})
     if (!res.ok) {
         throw new Error('Failed to fetch document')
     }
