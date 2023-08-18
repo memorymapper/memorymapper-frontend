@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef, useEffect, useContext, Suspense, createContext } from 'react'
+import { useRef, useEffect, useContext, Suspense } from 'react'
 import { PanelWidthContext } from '@/app/(map)/layout'
 import { PanelOffsetContext } from '@/app/(map)/layout'
 import PanelToggle from '@/components/buttons/PanelToggle'
@@ -8,7 +8,6 @@ export default function ContentLayout({children}) {
     
     const {panelWidth} = useContext(PanelWidthContext)
     const {setPanelWidth} = useContext(PanelWidthContext)
-    const {panelOffset} = useContext(PanelOffsetContext)
     const {setPanelOffset} = useContext(PanelOffsetContext)
 
     const panelContainer = useRef(null)    
@@ -17,7 +16,7 @@ export default function ContentLayout({children}) {
         if (panelContainer.current) {
         setPanelOffset(panelContainer.current.offsetWidth)
         }
-    }, [panelWidth])
+    }, [panelWidth, setPanelOffset])
 
     return (
         <div className="w-full h-full absolute z-40 pointer-events-none">
