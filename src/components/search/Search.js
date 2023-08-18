@@ -11,7 +11,7 @@ async function onSearch(e) {
 
 export default function Search() {
 
-    
+    // Todo: add search preview...
 
     return (
         <div className="flex flex-col">
