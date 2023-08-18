@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  
+  main h1 {
+      @apply font-light text-2xl mb-6;
+  }
+
+  main h2 {
+      @apply font-light text-2xl mb-3;
+  }
+
+  main h3 {
+      @apply font-light text-lg mb-2 italic;
+  }
+
+  p {
+      @apply font-light pb-6;
+  }
+
+  blockquote {
+      @apply px-8 italic font-extralight;
+  }
+
+  button {
+    @apply font-light;
+  }
+}

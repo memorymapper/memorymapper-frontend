@@ -1,33 +1,22 @@
 "use client"
-import { useState, useRef, useEffect } from 'react'
-import NavBar from '@/components/nav/NavBar'
+import { useState, useRef, useEffect, createContext } from 'react'
 import MapDisplay from '@/components/map/MapDisplay'
 import PanelToggle from '@/components/buttons/PanelToggle'
+import useSiteConfig from '@/apicalls/UseSiteConfig'
+import ContentPanel from '@/components/content/ContentPanel'
+import Container from '@/components/content/Container'
+
+export const PanelWidthContext = createContext(null)
 
 export default function Home() {
 
   const [panelWidth, setPanelWidth] = useState('w-1/3')
-  const [panelOffset, setPanelOffset] = useState(0)
-  const panelContainer = useRef(null)
-
-  useEffect(() => {
-    setPanelOffset(panelContainer.current.offsetWidth)
-  }, [panelWidth])
 
   return (
-    <>
-      <NavBar />
-      <main className="h-[calc(100%-3rem)] block relative">
-        <div className="w-full h-full absolute z-40">
-            <section className={panelWidth + ' h-full relative bg-emerald-50'} ref={panelContainer}>
-              <PanelToggle panelWidth={panelWidth} setPanelWidth={setPanelWidth} />
-              <h1 className={panelWidth == 'w-12' ? 'hidden' : 'visible' }>Content Panel</h1>
-            </section>
-        </div>
-        <div className="h-full w-full absolute z-10">
-            <MapDisplay panelOffset={panelOffset}/>
-        </div>
-      </main>
-    </>
+    <PanelWidthContext.Provider value={{panelWidth, setPanelWidth}}>
+      <Container>
+        <ContentPanel panelWidth={panelWidth} />
+      </Container>
+    </PanelWidthContext.Provider>
   )
 }
