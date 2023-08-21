@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import MapFilter from './MapFilter'
+import { hslToString, hexToHSL } from '@/utils/hexToHSL'
 
 export default function MapDisplay(props) {
 
@@ -14,7 +15,7 @@ export default function MapDisplay(props) {
 
     const [activeThemes, setActiveThemes] = useState(props.themes)
 
-    /* Tags are passed down the component tree as both a nested object (props.tagLists) which is used for grouping the tags in the UI, and a flat object of tags and their ids which is used for manipulating the filter state, as it's easier to deal with a flat list then an object. 
+    /* Tags are passed down the component tree as both a nested object (props.tagLists) which is used for grouping the tags in the UI, and a flat list of tags and their ids which is used for manipulating the filter state, as it's easier to deal with a flat list then an object. 
     
     The other way this could be done (and arguably more elegant) would be to have a single flat list returned from the api which contains a 'group' item for each tag, which you then use to both manage filter state and group in the UI.
     */
@@ -62,16 +63,28 @@ export default function MapDisplay(props) {
                 const themeStyles = [
                     'case',
                 ]
+
+                const themeStrokeStyles = [
+                    'case',
+                ]
                 
                 Object.keys(props.themes).forEach(key => {
                     themeStyles.push(['==', ['to-number', ['get', 'theme_id']], ['to-number', key]], props.themes[key].color)
+
+                    const hslColor = hexToHSL(props.themes[key].color)
+                    const hslString = hslToString(hslColor.h, hslColor.s, hslColor.l + 10)
+
+                    themeStrokeStyles.push(['==', ['to-number', ['get', 'theme_id']], ['to-number', key]], hslString)
+
                 })
                 
                 themeStyles.push('#c1c1c1')
+                themeStrokeStyles.push('#c1c1c1')
                 
                 map.current.addSource('interactive', {
                     'type': 'vector',
-                    'url': props.tileJson
+                    'url': props.tileJson,
+                    'promoteId': 'uuid'
                 })
                 
                 map.current.addLayer({
@@ -80,7 +93,37 @@ export default function MapDisplay(props) {
                     'source-layer': 'points',
                     type: 'circle',
                     paint: {
-                        'circle-color': themeStyles
+                        'circle-color': themeStyles,
+                        'circle-stroke-width': [
+                            'case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            5,
+                            4
+                        ],
+                        'circle-stroke-color': themeStrokeStyles,
+                        'circle-stroke-opacity': [
+                            'case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            1,
+                            0.5
+                        ]
+                    }
+                })
+
+                map.current.addLayer({
+                    id: 'points_labels',
+                    source: 'interactive',
+                    'source-layer': 'points',
+                    type: 'symbol',
+                    layout: {
+                        'text-field': ['get', 'name'],
+                        'text-anchor': 'left',
+                        'text-size': 10,
+                        'text-offset': [1, 0]
+                    },
+                    paint: {
+                        'text-halo-width': 3,
+                        'text-halo-color': 'rgba(255,255,255,0.8)'
                     }
                 })
                 
@@ -91,6 +134,9 @@ export default function MapDisplay(props) {
                     })
                   
                     if (features.length > 0) {
+                      console.log(features[0].geometry)
+                      map.current.flyTo({center: features[0].geometry.coordinates, zoom: 15})
+                      
                       const uuid = features[0].properties.uuid
                       const slug = features[0].properties.slug
 
@@ -98,17 +144,48 @@ export default function MapDisplay(props) {
                     }
                 })
 
-                map.current.on("hover", e => {
-                    const features = map.current.queryRenderedFeatures(e.point, {
-                        layers: ["points"],
-                      })
-                    
-                      if (features.length > 0) {
-                        const uuid = features[0].properties.uuid
-                        const slug = features[0].properties.slug
-  
-                        console.log('/feature/' + uuid + '/' + slug)
-                      }
+                let hoverStateId = null
+
+                map.current.on('mousemove', 'points', (e) => {
+                    if (e.features.length > 0) {
+                        map.current.getCanvas().style.cursor = 'pointer'
+                        if (hoverStateId) {
+                            map.current.setFeatureState(
+                                {
+                                    source: 'interactive', 
+                                    id: hoverStateId,
+                                    sourceLayer: 'points'
+                                },
+                                {hover: false}
+                            );
+                        }
+                        hoverStateId = e.features[0].id;
+                        map.current.setFeatureState(
+                            {
+                                source: 'interactive', 
+                                id: hoverStateId,
+                                sourceLayer: 'points'
+                            },
+                            {hover: true}
+                        );
+                    }
+                })
+        
+                // When the mouse leaves the state-fill layer, update the feature state of the
+                // previously hovered feature.
+                map.current.on('mouseleave', 'points', () => {
+                    if (hoverStateId) {
+                        map.current.getCanvas().style.cursor = ''
+                        map.current.setFeatureState(
+                            {
+                                source: 'interactive',
+                                id: hoverStateId,
+                                sourceLayer: 'points'
+                        },
+                            {hover: false}
+                        );
+                    }
+                    hoverStateId = null;
                 })
 
             })
