@@ -5,7 +5,7 @@ export default function useFeature(uuid) {
     const { data, error, isLoading } = useSWR(process.env.NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT + '2.0/features/' + uuid, fetcher)
 
     return {
-        siteConfig: data,
+        feature: data,
         isLoading,
         isError: error
     }

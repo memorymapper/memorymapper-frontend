@@ -1,34 +1,43 @@
-import Link from "next/link"
-
-async function getFeature(uuid) {
-
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/features/' + uuid + '/attachments', {cache: 'no-store'})
-
-    if (!res.ok) {
-        throw new Error('Failed to fetch feature')
-    }
-
-    return res.json()
-}
+"use client"
+import { useContext, useEffect } from "react"
+import useFeature from "@/apicalls/useFeature"
+import { ActiveFeature } from "@/app/(map)/layout"
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 
-export default async function PanelLayout({params, children}) {
-    const feature = await getFeature(params.uuid)
+export default function PanelLayout({params, children}) {
 
-    const tabs = feature.attachments.map((a, index) => (
-        {
-            name: a.title, 
-            href: '/feature/' + params.uuid + '/' + a.slug, current: index == 0 ? true : false 
+    const {setActiveFeature} = useContext(ActiveFeature)
+    const {activeFeature} = useContext(ActiveFeature)
+    
+    useEffect(() => {
+        if (!activeFeature) {
+            setTimeout(() => {
+                setActiveFeature(params.uuid)
+            }, 2000)
         }
-    ))
+    }, [activeFeature])
+    
+    const {feature, isLoading, isError} = useFeature(params.uuid)
 
+    if (isLoading) {
+        return (
+            <div>Loading...</div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div>Error...</div>
+        )
+    }
+    
     return (
         <div className="h-full overflow-hidden">
-            <h2>{ feature.properties.name }</h2>
+            <h2>{ feature ? feature.properties.name : null }</h2>
             {children}
         </div>
     )

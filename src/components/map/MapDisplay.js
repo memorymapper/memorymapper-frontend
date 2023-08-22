@@ -1,9 +1,10 @@
 "use client"
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import MapFilter from './MapFilter'
+import { ActiveFeature } from '@/app/(map)/layout'
 import { hslToString, hexToHSL } from '@/utils/hexToHSL'
 
 export default function MapDisplay(props) {
@@ -12,6 +13,9 @@ export default function MapDisplay(props) {
     const map = useRef(null)
 
     const router = useRouter()
+
+    const {activeFeature} = useContext(ActiveFeature)
+    const {setActiveFeature} = useContext(ActiveFeature)
 
     const [activeThemes, setActiveThemes] = useState(props.themes)
 
@@ -37,7 +41,7 @@ export default function MapDisplay(props) {
       
         map.current = new maplibregl.Map({
           container: mapContainer.current,
-          style: `https://api.maptiler.com/maps/dataviz-light/style.json?key=${props.apiKey}`,
+          style: `https://api.maptiler.com/maps/dataviz/style.json?key=${props.apiKey}`,
           center: props.mapCenter,
           zoom: props.mapZoom
         })
@@ -134,16 +138,13 @@ export default function MapDisplay(props) {
                     })
                   
                     if (features.length > 0) {
-                      console.log(features[0].geometry)
-                      map.current.flyTo({center: features[0].geometry.coordinates, zoom: 15})
-                      
-                      const uuid = features[0].properties.uuid
-                      const slug = features[0].properties.slug
-
-                      router.push(('/feature/' + uuid + '/' + slug))
+                        const uuid = features[0].properties.uuid
+                        setActiveFeature(uuid)
                     }
                 })
 
+
+                // Change feature style on hover
                 let hoverStateId = null
 
                 map.current.on('mousemove', 'points', (e) => {
@@ -191,6 +192,23 @@ export default function MapDisplay(props) {
             })
         }
     }, [map])
+
+    useEffect(() => {
+        if (map.current && map.current.loaded() && activeFeature) {
+            if (activeFeature) {
+                const features = map.current.querySourceFeatures('interactive', {
+                    'sourceLayer': 'points',
+                    'filter': ['==', ['get', 'uuid'], activeFeature]
+                })
+                if (features.length > 0) {
+                    map.current.flyTo({center: features[0].geometry.coordinates, zoom: 15})
+                    const uuid = features[0].properties.uuid
+                    const slug = features[0].properties.slug
+                    router.push(('/feature/' + uuid + '/' + slug))
+                }
+            }
+        }
+    }, [map, activeFeature])
 
     useEffect(() => {
         // Apply the map filters when they are updated

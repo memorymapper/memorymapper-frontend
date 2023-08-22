@@ -1,4 +1,4 @@
-import { sanitize, isSupported } from 'isomorphic-dompurify'
+import { sanitize } from 'isomorphic-dompurify'
 
 async function getAttachment(uuid, slug) {
 
