@@ -1,25 +1,30 @@
 "use client"
 import { useContext, useEffect } from "react"
+import { useParams } from 'next/navigation'
 import useFeature from "@/apicalls/useFeature"
-import { ActiveFeature } from "@/app/(map)/layout"
+import { ActiveFeatureContext } from "@/app/providers"
+import { MapContext } from "@/app/providers"
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 
-export default function PanelLayout({params, children}) {
+export default function PanelLayout({children}) {
 
-    const {setActiveFeature} = useContext(ActiveFeature)
-    const {activeFeature} = useContext(ActiveFeature)
+    const params = useParams()
     
+    const {activeFeature} = useContext(ActiveFeatureContext)
+    const {setActiveFeature} = useContext(ActiveFeatureContext)
+    const {map} = useContext(MapContext)
+    
+    /*
     useEffect(() => {
         if (!activeFeature) {
-            setTimeout(() => {
-                setActiveFeature(params.uuid)
-            }, 2000)
+            setActiveFeature(params.uuid)
         }
     }, [activeFeature])
+    */
     
     const {feature, isLoading, isError} = useFeature(params.uuid)
 

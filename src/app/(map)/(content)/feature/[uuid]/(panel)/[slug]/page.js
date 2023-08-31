@@ -1,4 +1,5 @@
 import { sanitize } from 'isomorphic-dompurify'
+import ActiveFeatureConsumer from './ActiveFeatureConsumer'
 
 async function getAttachment(uuid, slug) {
 
@@ -15,8 +16,6 @@ export default async function Page({params}) {
     const clean = sanitize(attachment.body)
 
     return (
-        <div>
-            <div dangerouslySetInnerHTML={{__html: clean}}></div>
-        </div>
+        <div dangerouslySetInnerHTML={{__html: clean}}></div>
     )    
 }

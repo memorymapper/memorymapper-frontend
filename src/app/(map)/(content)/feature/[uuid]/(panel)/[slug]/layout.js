@@ -1,4 +1,5 @@
 import Link from "next/link"
+import ActiveFeatureConsumer from './ActiveFeatureConsumer'
 
 async function getFeature(uuid) {
 
@@ -27,7 +28,8 @@ export default async function AttachmentLayout({params, children}) {
     ))
 
     return (
-        <div className="h-full overflow-hidden">
+        <ActiveFeatureConsumer uuid={params.uuid} slug={params.slug}>
+            <div className="h-full overflow-hidden">
                 <div className="sm:hidden">
                     <label htmlFor="tabs" className="sr-only">
                     Select a tab
@@ -69,6 +71,6 @@ export default async function AttachmentLayout({params, children}) {
                     {children}
                 </div>
             </div>
- 
+        </ActiveFeatureConsumer>
     )
 }

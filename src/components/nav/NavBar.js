@@ -30,11 +30,11 @@ export default async function NavBar(props) {
     const pages = await getPages()
 
     return (
-        <nav className="w-full h-12 bg-white flex flex-row shadow-sm justify-between px-6 items-center  font-light">
+        <nav className="w-full h-12 bg-white flex flex-row shadow-sm justify-between px-6 items-center font-light">
             <div>
-                <Link href="/"><h1 className="italic text-lg">{siteConfig.SITE_TITLE + ': ' + siteConfig.SITE_SUBTITLE}</h1></Link>
+                <Link href="/"><h1 className="italic text-lg">{siteConfig.SITE_TITLE}<span className="sm:visible">: {siteConfig.SITE_SUBTITLE}</span></h1></Link>
             </div>
-            <div className="flex flex-row">
+            <div className="flex flex-row sm:visible">
                 {pages ? pages.map((item) => (
                     <Link key={props.slug} className="h-full mx-4 pt-1.5 text-sm text-slate-500 hover:text-slate-700 hover:border-b border-slate-700" href={'/page/' + item.slug}>{item.title}</Link>
                 )) : null}

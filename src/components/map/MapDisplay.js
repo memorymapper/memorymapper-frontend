@@ -4,18 +4,22 @@ import { useRouter } from 'next/navigation'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import MapFilter from './MapFilter'
-import { ActiveFeature } from '@/app/(map)/layout'
+import { ActiveFeatureContext } from '@/app/providers'
 import { hslToString, hexToHSL } from '@/utils/hexToHSL'
+import { MapContext } from '@/app/providers'
+
 
 export default function MapDisplay(props) {
 
     const mapContainer = useRef(null)
-    const map = useRef(null)
+    //const map = useRef(null)
+    const {map} = useContext(MapContext)
 
     const router = useRouter()
 
-    const {activeFeature} = useContext(ActiveFeature)
-    const {setActiveFeature} = useContext(ActiveFeature)
+    const {activeFeature} = useContext(ActiveFeatureContext)
+    const {setActiveFeature} = useContext(ActiveFeatureContext)
+    
 
     const [activeThemes, setActiveThemes] = useState(props.themes)
 
@@ -33,8 +37,6 @@ export default function MapDisplay(props) {
     })
 
     const [activeTags, setActiveTags] = useState(flatTagList)
-
-    /*const [availableTagList, setAvailableTagList] = useState(Object.keys(flatTagList).map(tag => flatTagList[tag].name))*/
 
     useEffect(() => {
         if (map.current) return; // stops map from intializing more than once
@@ -139,7 +141,9 @@ export default function MapDisplay(props) {
                   
                     if (features.length > 0) {
                         const uuid = features[0].properties.uuid
-                        setActiveFeature(uuid)
+                        const slug = features[0].properties.slug
+                        //setActiveFeature(uuid)
+                        setActiveFeature({feature: uuid, slug: slug})
                     }
                 })
 
@@ -195,17 +199,17 @@ export default function MapDisplay(props) {
 
     useEffect(() => {
         if (map.current && map.current.loaded() && activeFeature) {
-            if (activeFeature) {
+            if (activeFeature.feature) {
                 const features = map.current.querySourceFeatures('interactive', {
                     'sourceLayer': 'points',
-                    'filter': ['==', ['get', 'uuid'], activeFeature]
+                    'filter': ['==', ['get', 'uuid'], activeFeature.feature]
                 })
+
                 if (features.length > 0) {
                     map.current.flyTo({center: features[0].geometry.coordinates, zoom: 15})
-                    const uuid = features[0].properties.uuid
-                    const slug = features[0].properties.slug
-                    router.push(('/feature/' + uuid + '/' + slug))
+                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
                 }
+
             }
         }
     }, [map, activeFeature])
@@ -217,6 +221,8 @@ export default function MapDisplay(props) {
             const allFilters = ['all']
             
             // Tags
+            // As this is written, any of the flat list of tags can be active, which leads to slightly counter-intuitive results (ie. if something is tagged 'Austrian' and 'Prose', turning off 'Prose' leaves it active if 'Austrian' is still active.) So what needs to happen is each tag group adds a separate ['all'] combo to the allFilters list.
+
             const tagFilters = ['any']
             Object.keys(activeTags).forEach((key) => {
                 if (activeTags[key].active) {

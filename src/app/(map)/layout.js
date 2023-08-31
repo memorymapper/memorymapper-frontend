@@ -1,18 +1,17 @@
 "use client"
 import useSiteConfig from '@/apicalls/useSiteConfig'
-import { useState, createContext } from 'react'
+import { useState, createContext, useContext } from 'react'
 import MapDisplay from '@/components/map/MapDisplay'
+import CommandPalette from '@/components/search/CommandPalette'
 
 export const PanelWidthContext = createContext(null)
 export const SiteConfigContext = createContext(null)
 export const PanelOffsetContext = createContext(null)
-export const ActiveFeature = createContext(null)
 
 export default function MapLayout({children}) {
 
     const [panelWidth, setPanelWidth] = useState('w-1/3')
     const [panelOffset, setPanelOffset] = useState(0)
-    const [activeFeature, setActiveFeature] = useState(null)
     
     const {siteConfig, isLoading, isError} = useSiteConfig()
     if (isLoading) return <h1>Loading...</h1>
@@ -21,9 +20,9 @@ export default function MapLayout({children}) {
     return (
         <PanelWidthContext.Provider value={{panelWidth, setPanelWidth}}>
             <SiteConfigContext.Provider value={siteConfig}>
-                <PanelOffsetContext.Provider value={{panelOffset, setPanelOffset}} >
+                <PanelOffsetContext.Provider value={{panelOffset, setPanelOffset}}>
+                    <CommandPalette />
                     <main className="h-[calc(100%-3rem)] block relative">
-                        <ActiveFeature.Provider value={{activeFeature, setActiveFeature}}>
                             { children }
                             <MapDisplay 
                                 panelOffset={panelOffset} 
@@ -34,7 +33,6 @@ export default function MapLayout({children}) {
                                 themes={siteConfig.themes} 
                                 tagLists={siteConfig.tagLists} 
                             />
-                        </ActiveFeature.Provider>
                     </main>
                 </PanelOffsetContext.Provider>
             </SiteConfigContext.Provider>

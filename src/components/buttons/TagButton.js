@@ -11,9 +11,9 @@ export default function TagButton(props) {
     return (
         <button 
             className={
-                props.active ? 
-                "p-1 text-xs m-0.5 rounded-xl bg-slate-300" 
-                : "p-1 text-xs m-0.5 rounded-xl bg-slate-100"
+                props.active 
+                ? "p-0.5 text-xs m-0.5 rounded-lg bg-slate-300 hover:bg-slate-200" 
+                : "p-0.5 text-xs m-0.5 rounded-lg bg-slate-100 hover:bg-slate-200"
             } 
             onClick={() => changeState(
                 props.setActiveTags, 
