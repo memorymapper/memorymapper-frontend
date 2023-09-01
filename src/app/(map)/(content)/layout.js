@@ -20,7 +20,8 @@ export default function ContentLayout({children}) {
 
     return (
         <div className="w-full h-full absolute z-[10] pointer-events-none">
-            <div className={`z-10 ${panelWidth} h-[calc(100%-1rem)] sm:h-full absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0`} ref={panelContainer}>
+            <div className={`z-10 ${panelWidth} h-[calc(100%-1rem)] sm:h-full absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0`} 
+            ref={panelContainer}>
               <PanelToggle panelWidth={panelWidth} setPanelWidth={setPanelWidth} />
               <Suspense fallback={<p>Loading...</p>}>
                 { children }

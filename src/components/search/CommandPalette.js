@@ -3,14 +3,15 @@ import { Fragment, useState, useContext, useEffect } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { FaceFrownIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import { Combobox, Dialog, Transition } from '@headlessui/react'
-import { useRouter } from 'next/navigation'
 
 import { CommandPaletteContext } from '@/app/providers'
 import { ActiveFeatureContext } from '@/app/providers'
+import { MapContext } from '@/app/providers'
 
-async function onSearch(query) {
+async function onSearch(query, map, center, zoom) {
     if (query.length > 2) {
-        //const res = await fetch(process.env.NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT + '2.0/features/attachments/documents/?search=' + query + '&limit=5', {cache: 'no-store'})
+
+        map.current.flyTo({center:center, zoom: zoom})
 
         const res = await fetch(process.env.NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT + '2.0/search/?q=' + query + '&limit=5', {cache: 'no-store'})
 
@@ -21,17 +22,6 @@ async function onSearch(query) {
         }
 
         const ids = items.map((item) => item.id)
-
-        /*data.results.forEach((result) => {
-            if (ids.includes(result.id) == false) {
-                items.push({
-                    id: result.id,
-                    name: `${result.point.properties.name}: ${result.title}`,
-                    category: 'Documents',
-                    url: `/feature/${result.point.properties.uuid}/${result.slug}`
-                })
-            }
-        })*/
 
         data.results.forEach((result) => {
             if (ids.includes(result.id) == false) {
@@ -57,20 +47,19 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function CommandPalette() {
-  const router = useRouter()
+export default function CommandPalette(props) {
   const {open} = useContext(CommandPaletteContext)
   const {setOpen} = useContext(CommandPaletteContext)
   const {setActiveFeature} = useContext(ActiveFeatureContext)
-  const {activeFeature} = useContext(ActiveFeatureContext)
+  const {map} = useContext(MapContext)
   
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    if (query.length == 0) {
+    if (query.length <= 1) {
         items = []
     }
-    onSearch(query)
+    onSearch(query, map, props.mapCenter, props.mapZoom)
   }, [query])
 
   const filteredItems =

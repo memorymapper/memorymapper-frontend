@@ -8,18 +8,15 @@ import { ActiveFeatureContext } from '@/app/providers'
 import { hslToString, hexToHSL } from '@/utils/hexToHSL'
 import { MapContext } from '@/app/providers'
 
-
 export default function MapDisplay(props) {
 
     const mapContainer = useRef(null)
-    //const map = useRef(null)
     const {map} = useContext(MapContext)
 
     const router = useRouter()
 
     const {activeFeature} = useContext(ActiveFeatureContext)
     const {setActiveFeature} = useContext(ActiveFeatureContext)
-    
 
     const [activeThemes, setActiveThemes] = useState(props.themes)
 
@@ -43,7 +40,7 @@ export default function MapDisplay(props) {
       
         map.current = new maplibregl.Map({
           container: mapContainer.current,
-          style: `https://api.maptiler.com/maps/dataviz/style.json?key=${props.apiKey}`,
+          style: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${props.apiKey}`,
           center: props.mapCenter,
           zoom: props.mapZoom
         })
@@ -54,12 +51,16 @@ export default function MapDisplay(props) {
 
     useEffect(() => {
         // Pan the map to offset the center on the basis of the width of the panel
-        if (map.current) {
+        if (map.current && map.current.loaded()) {
+            if (props.panelWidth == 'w-12') {
+                map.current.flyTo({center: props.mapCenter, zoom: props.mapZoom})
+                return
+            }
             if (props.panelOffset) {
                 map.current.easeTo({padding: {top: 0, right: 0, bottom: 0, left: props.panelOffset}, duration: 500})
             }
         }
-    }, [props.panelOffset])
+    }, [props.panelOffset, props.panelWidth])
 
     useEffect(() => {
         // Add the data to the map
@@ -141,8 +142,7 @@ export default function MapDisplay(props) {
                   
                     if (features.length > 0) {
                         const uuid = features[0].properties.uuid
-                        const slug = features[0].properties.slug
-                        //setActiveFeature(uuid)
+                        const slug = features[0].properties.attachments.split(',')[0]
                         setActiveFeature({feature: uuid, slug: slug})
                     }
                 })
@@ -192,12 +192,12 @@ export default function MapDisplay(props) {
                     }
                     hoverStateId = null;
                 })
-
             })
         }
     }, [map])
 
     useEffect(() => {
+        // If there is an activeFeature, fly to it and load the page
         if (map.current && map.current.loaded() && activeFeature) {
             if (activeFeature.feature) {
                 const features = map.current.querySourceFeatures('interactive', {
@@ -206,6 +206,9 @@ export default function MapDisplay(props) {
                 })
 
                 if (features.length > 0) {
+                    if (props.panelWidth == 'w-12') {
+                        props.setPanelWidth('w-1/3')
+                    }
                     map.current.flyTo({center: features[0].geometry.coordinates, zoom: 15})
                     router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
                 }
@@ -240,6 +243,7 @@ export default function MapDisplay(props) {
             allFilters.push(themeFilter) 
                         
             map.current.setFilter('points', allFilters)
+            map.current.setFilter('points_labels', allFilters)
 
             // When the filters are updated, updated the list of available tags so the intersection is always visible
             

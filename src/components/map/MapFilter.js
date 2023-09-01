@@ -25,7 +25,7 @@ export default function MapFilter(props) {
                             setActiveThemes={props.setActiveThemes} 
                             themes={props.themes} 
                             id={key} 
-                            color={props.themes[key].color} 
+                            color={props.themes[key].color}
                         /> 
                     )
                 }) : null}

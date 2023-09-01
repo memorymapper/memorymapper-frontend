@@ -38,7 +38,7 @@ export default async function NavBar(props) {
                 {pages ? pages.map((item) => (
                     <Link key={props.slug} className="h-full mx-4 pt-1.5 text-sm text-slate-500 hover:text-slate-700 hover:border-b border-slate-700" href={'/page/' + item.slug}>{item.title}</Link>
                 )) : null}
-                <Search />
+                <Search siteConfig={siteConfig} />
             </div>
         </nav>
     )

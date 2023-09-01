@@ -1,6 +1,10 @@
+"use client"
+import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid"
+
 export default function PanelToggle(props) {
 
     function handleClick(dir, setPanelWidth, panelWidth) {
+        
         switch (dir) {
             case 'l':
                 if (panelWidth == 'w-1/2') {
@@ -16,6 +20,9 @@ export default function PanelToggle(props) {
                     setPanelWidth('w-1/2')
                 }
                 break
+            case 'x':
+                setPanelWidth('w-12')
+                break
         }
     }
 
@@ -23,14 +30,20 @@ export default function PanelToggle(props) {
         <div className="absolute right-0 top-2">
             <button 
                 onClick={() => handleClick('l', props.setPanelWidth, props.panelWidth)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
+                    <ChevronLeftIcon className={props.panelWidth == 'w-1/3' || props.panelWidth == 'w-12' ? "hidden" : "w-6 h-6"} />
             </button>
 
-            <button onClick={() => handleClick('r', props.setPanelWidth, props.panelWidth)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg></button>
+            <button 
+                onClick={() => handleClick('r', props.setPanelWidth, props.panelWidth)}>
+                    <ChevronRightIcon className={props.panelWidth == 'w-1/2' ? "hidden" : "w-6 h-6"} />
+            </button>
+
+            <button
+                onClick={() => handleClick('x', props.setPanelWidth, props.panelWidth)}>
+                <XMarkIcon className={props.panelWidth == 'w-12' ? "hidden" : "w-6 h-6"}/>
+            </button>
+            
+
         </div>
     )
 } 

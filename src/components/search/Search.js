@@ -1,19 +1,21 @@
 "use client"
 import { useContext, useRef } from "react"
 import { CommandPaletteContext } from "@/app/providers"
+import { MapContext } from "@/app/providers"
 
 
-export default function Search() {
+export default function Search(props) {
 
     const searchRef = useRef(null)
 
     const {setOpen} = useContext(CommandPaletteContext)
+    const {map} = useContext(MapContext)
 
     function onSearch(e) {
         e.preventDefault()
-        searchRef.current.blur()
         searchRef.current.value = ''
         setOpen(true)
+        searchRef.current.blur()
     }
 
     return (

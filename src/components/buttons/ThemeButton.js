@@ -1,4 +1,5 @@
 function changeState(setActiveThemes, active, themes, id, color, name) {
+
     if (active) {
         setActiveThemes({...themes, [id]: {name: name, active: false, color: color }})
     } else {
@@ -21,7 +22,7 @@ export default function ThemeButton(props) {
                 props.themes, 
                 props.id, 
                 props.color, 
-                props.name 
+                props.name,
             )} 
             style={
                 {'backgroundColor': props.active 
