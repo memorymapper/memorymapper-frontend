@@ -129,8 +129,9 @@ export default function MapDisplay(props) {
                         'text-offset': [1, 0]
                     },
                     paint: {
+                        'text-color': '#c1c1c1',
                         'text-halo-width': 3,
-                        'text-halo-color': 'rgba(255,255,255,0.8)'
+                        'text-halo-color': 'rgba(56,56,56,0.8)'
                     }
                 })
                 
