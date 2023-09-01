@@ -13,7 +13,7 @@ async function getAttachment(uuid, slug) {
 export default async function Page({params}) {
     const attachment = await getAttachment(params.uuid, params.slug)
 
-    const clean = sanitize(attachment.body)
+    const clean = sanitize(attachment.body, {USE_PROFILES: {html: true}})
 
     return (
         <>
