@@ -31,7 +31,13 @@ export default function MapFilter(props) {
                 }) : null}
             </div>
             <div className="flex flex-row">
-                <h4>Filter by {props.tagLists ? Object.keys(props.tagLists).map(key => ( props.tagLists[key].name + ', ' )) : null}</h4>
+                <h4>Filter by {props.tagLists ? Object.keys(props.tagLists).map((key, index) => {
+                    if (index == Object.keys(props.tagLists).length -1) {
+                        return (props.tagLists[key].name)
+                    } else {
+                        return (props.tagLists[key].name + ', ')
+                    }
+                    }) : null}</h4>
                 <ChevronRightIcon className={showTags ? "hidden h-7" : "visible h-7"} onClick={handleClick}/>
                 <ChevronDownIcon className={showTags ? "visible h-7" : "hidden h-7"} onClick={handleClick}/>
             </div>

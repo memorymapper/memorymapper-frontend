@@ -40,10 +40,13 @@ export default function MapDisplay(props) {
       
         map.current = new maplibregl.Map({
           container: mapContainer.current,
-          style: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${props.apiKey}`,
+          style: `https://api.maptiler.com/maps/positron/style.json?key=${props.apiKey}`,
+          //style: 'https://api.mapbox.com/styles/v1/chronocarto/clm6h762v00z401nz9kub3p8n?access_token=pk.eyJ1IjoiY2hyb25vY2FydG8iLCJhIjoiY2trbnRnajFvM2xocTJvcGF5czBsdGQ4byJ9.4AKwwY23PdK6ZD5lJUhaYQ',
           center: props.mapCenter,
           zoom: props.mapZoom
         })
+
+        
       
         map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
 
@@ -129,9 +132,9 @@ export default function MapDisplay(props) {
                         'text-offset': [1, 0]
                     },
                     paint: {
-                        'text-color': '#c1c1c1',
+                        'text-color': 'black',
                         'text-halo-width': 3,
-                        'text-halo-color': 'rgba(56,56,56,0.8)'
+                        'text-halo-color': 'rgba(235,235,235,0.8)'
                     }
                 })
                 
