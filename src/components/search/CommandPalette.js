@@ -11,6 +11,8 @@ import { MapContext } from '@/app/providers'
 async function onSearch(query, map, center, zoom) {
     if (query.length > 2) {
 
+      items = []
+
         map.current.flyTo({center:center, zoom: zoom})
 
         const res = await fetch(process.env.NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT + '2.0/search/?q=' + query + '&limit=5', {cache: 'no-store'})
@@ -33,6 +35,9 @@ async function onSearch(query, map, center, zoom) {
                     uuid: result.uuid,
                     slug: result.slug
                 })
+            }
+            if (items.length > 8) {
+              items.pop()
             }
         })
     }
