@@ -1,4 +1,18 @@
-function changeState(setActiveTags, active, activeTags, id, name) {
+function changeState(setActiveTags, active, activeTags, id, name, isFiltered, setIsFiltered) {
+    
+    if (!isFiltered) {
+        const newTagFilter = {}
+        Object.keys(activeTags).forEach(key => {
+            newTagFilter[key] = activeTags[key]
+            key != id 
+            ? newTagFilter[key].active = false 
+            : newTagFilter[key].active = true
+        })
+        setActiveTags(newTagFilter)
+        setIsFiltered(true)
+        return
+    }
+    
     if (active) {
         setActiveTags({...activeTags, [id]: {name: name, active: false }})
     } else {
@@ -20,7 +34,9 @@ export default function TagButton(props) {
                 props.active, 
                 props.activeTags, 
                 props.id, 
-                props.name 
+                props.name,
+                props.isFiltered,
+                props.setIsFiltered
             )} 
             >
             {'#' + props.name}

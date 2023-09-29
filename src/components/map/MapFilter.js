@@ -2,19 +2,34 @@ import { useState } from "react"
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid"
 import ThemeButton from "../buttons/ThemeButton"
 import TagButton from "../buttons/TagButton"
+import ResetFilterButton from "../buttons/ResetFiltersButton"
 
 
 export default function MapFilter(props) {
 
     const [showTags, setShowTags] = useState(false)
 
+    // These check if any themes or tags are active so the filters can be additive as soon as a user starts turning things on or off.
+    const [isThemeFiltered, setIsThemeFiltered] = useState(false)
+    const [isTagFiltered, setIsTagFiltered] = useState(false)
+
     function handleClick(e) {
         showTags ? setShowTags(false) : setShowTags(true)
     }
 
     return (
-        <div className="w-1/3 bg-stone-50 rounded absolute bottom-6 right-6 p-1">
+        <div className="w-1/3 bg-stone-50 rounded absolute bottom-6 right-6 p-1 hidden sm:block">
             <div className="mb-2">
+                <ResetFilterButton 
+                    isThemeFiltered={isThemeFiltered} 
+                    isTagFiltered={isTagFiltered} 
+                    setIsThemeFiltered={setIsThemeFiltered} 
+                    setIsTagFiltered={setIsTagFiltered} 
+                    themes={props.themes} 
+                    tags={props.activeTags} 
+                    setActiveThemes={props.setActiveThemes}
+                    setActiveTags={props.setActiveTags}
+                />
                 <h3>Themes</h3>
                 {props.themes ? Object.keys(props.themes).map(key => {
                     return (
@@ -26,6 +41,8 @@ export default function MapFilter(props) {
                             themes={props.themes} 
                             id={key} 
                             color={props.themes[key].color}
+                            isFiltered={isThemeFiltered}
+                            setIsFiltered={setIsThemeFiltered}
                         /> 
                     )
                 }) : null}
@@ -56,7 +73,8 @@ export default function MapFilter(props) {
                                     id={t}
                                     /* the active state from the grouped tagLists is ignored and mapped to the flat object containing the tag states instead. Why? because the grouped tagLists are used for layout but is fragile to manipulate, whilst the flat list is easy to parse. */
                                     active={props.activeTags[t].active}
-                                    /*available={props.availableTagList}*/
+                                    isFiltered={isTagFiltered}
+                                    setIsFiltered={setIsTagFiltered}
                                 />
                             )   
                         )}

@@ -1,28 +1,29 @@
 "use client"
 import { useRef, useEffect, useContext, Suspense } from 'react'
-import { PanelWidthContext } from '@/app/(map)/layout'
+import { PanelSizeContext } from '@/app/providers'
 import { PanelOffsetContext } from '@/app/(map)/layout'
 import PanelToggle from '@/components/buttons/PanelToggle'
+import MobilePanelToggle from '@/components/buttons/MobilePanelToggle'
 
 export default function ContentLayout({children}) {
     
-    const {panelWidth} = useContext(PanelWidthContext)
-    const {setPanelWidth} = useContext(PanelWidthContext)
+    const {panelSize, setPanelSize} = useContext(PanelSizeContext)
     const {setPanelOffset} = useContext(PanelOffsetContext)
 
     const panelContainer = useRef(null)    
     
     useEffect(() => {
         if (panelContainer.current) {
-        setPanelOffset(panelContainer.current.offsetWidth)
+          setPanelOffset(panelContainer.current.offsetWidth)
         }
-    }, [panelWidth, setPanelOffset])
+    }, [panelSize, setPanelOffset])
 
     return (
         <div className="w-full h-full absolute z-[10] pointer-events-none">
-            <div className={`z-10 ${panelWidth} h-[calc(100%-1rem)] sm:h-full absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0`} 
+            <div className={panelSize} 
             ref={panelContainer}>
-              <PanelToggle panelWidth={panelWidth} setPanelWidth={setPanelWidth} />
+              <PanelToggle panelSize={panelSize} setPanelSize={setPanelSize} />
+              <MobilePanelToggle panelSize={panelSize} setPanelSize={setPanelSize}  />
               <Suspense fallback={<p>Loading...</p>}>
                 { children }
               </Suspense>

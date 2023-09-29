@@ -7,6 +7,8 @@ import MapFilter from './MapFilter'
 import { ActiveFeatureContext } from '@/app/providers'
 import { hslToString, hexToHSL } from '@/utils/hexToHSL'
 import { MapContext } from '@/app/providers'
+import { panelClassNames } from '@/app/providers'
+
 
 export default function MapDisplay(props) {
 
@@ -210,8 +212,11 @@ export default function MapDisplay(props) {
                 })
 
                 if (features.length > 0) {
-                    if (props.panelWidth == 'w-12') {
-                        props.setPanelWidth('w-1/3')
+                    /*if (props.panelWidth == 'sm:w-12') {
+                        props.setPanelWidth('sm:w-1/3')
+                    }*/
+                    if (props.panelSize == panelClassNames.hidden) {
+                        props.setPanelSize(panelClassNames.medium)
                     }
                     map.current.flyTo({center: features[0].geometry.coordinates, zoom: 15})
                     router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))

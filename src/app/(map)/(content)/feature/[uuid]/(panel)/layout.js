@@ -1,7 +1,6 @@
 "use client"
 import { useParams } from 'next/navigation'
 import useFeature from "@/apicalls/useFeature"
-import { createContext, useContext, useEffect } from 'react'
 
 export default function PanelLayout({children}) {
 

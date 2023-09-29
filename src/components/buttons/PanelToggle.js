@@ -1,49 +1,48 @@
-"use client"
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid"
+
+import { panelClassNames } from "@/app/providers"
+
 
 export default function PanelToggle(props) {
 
-    function handleClick(dir, setPanelWidth, panelWidth) {
-        
+    function handleClick(dir, setPanelSize, panelSize) {
+
         switch (dir) {
             case 'l':
-                if (panelWidth == 'w-1/2') {
-                    setPanelWidth('w-1/3')
-                } else if (panelWidth == 'w-1/3') {
-                    setPanelWidth('w-12')
+                if (panelSize == panelClassNames.large) {
+                    setPanelSize(panelClassNames.medium)
+                } else if (panelSize == panelClassNames.medium) {
+                    setPanelSize(panelClassNames.hidden)
                 }
                 break
             case 'r':
-                if (panelWidth == 'w-12') {
-                    setPanelWidth('w-1/3')
-                } else if (panelWidth == 'w-1/3') {
-                    setPanelWidth('w-1/2')
+                if (panelSize == panelClassNames.hidden) {
+                    setPanelSize(panelClassNames.medium)
+                } else if (panelSize == panelClassNames.medium) {
+                    setPanelSize(panelClassNames.large)
                 }
                 break
             case 'x':
-                setPanelWidth('w-12')
+                setPanelSize(panelClassNames.hidden)
                 break
         }
     }
 
     return (
-        <div className="absolute right-0 top-2">
+        <div className="absolute right-0 top-2 hidden sm:block">
             <button 
-                onClick={() => handleClick('l', props.setPanelWidth, props.panelWidth)}>
-                    <ChevronLeftIcon className={props.panelWidth == 'w-1/3' || props.panelWidth == 'w-12' ? "hidden" : "w-6 h-6"} />
+                onClick={() => handleClick('l', props.setPanelSize, props.panelSize)}>
+                    <ChevronLeftIcon className={props.panelSize == panelClassNames.medium || props.panelSize == panelClassNames.hidden ? "hidden" : "w-6 h-6"} />
             </button>
-
             <button 
-                onClick={() => handleClick('r', props.setPanelWidth, props.panelWidth)}>
-                    <ChevronRightIcon className={props.panelWidth == 'w-1/2' ? "hidden" : "w-6 h-6"} />
+                onClick={() => handleClick('r', props.setPanelSize, props.panelSize)}>
+                    <ChevronRightIcon className={props.panelSize == panelClassNames.large ? "hidden" : "w-6 h-6"} />
             </button>
 
             <button
-                onClick={() => handleClick('x', props.setPanelWidth, props.panelWidth)}>
-                <XMarkIcon className={props.panelWidth == 'w-12' ? "hidden" : "w-6 h-6"}/>
+                onClick={() => handleClick('x', props.setPanelSize, props.panelSize)}>
+                <XMarkIcon className={props.panelSize == panelClassNames.hidden ? "hidden" : "w-6 h-6"}/>
             </button>
-            
-
         </div>
     )
 } 

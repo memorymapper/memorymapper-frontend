@@ -1,4 +1,6 @@
 import { sanitize, isSupported } from 'isomorphic-dompurify'
+import TabContent from './TabContent'
+
 
 async function getPage(slug) {
 
@@ -14,12 +16,25 @@ async function getPage(slug) {
 export default async function Page({params}) {
     const page = await getPage(params.slug)
 
-    const clean = sanitize(page.body)
+    const tabs = [
+        {
+            name: page.title,
+            current: true,
+            body: sanitize(page.body)
+        }
+    ]
+
+    page.sections.forEach((s) => (
+        tabs.push(
+            {
+                name: s.title, 
+                current: false,
+                body: sanitize(s.body)
+            }
+        )
+    ))
     
     return (
-        <div>
-            <h1>{page.title}</h1>
-            <div dangerouslySetInnerHTML={{__html: clean}}></div>
-        </div>
+        <TabContent tabs={tabs} />
     )
 }
