@@ -38,7 +38,7 @@ export default function NavBar(props) {
               <div className="hidden lg:ml-6 lg:flex lg:space-x-8 w-1/3 justify-end">
                   {props.pages ? props.pages.map((item) => (
                     <Link 
-                      key={props.slug} 
+                      key={item.slug} 
                       className="inline-flex items-center mx-4 pt-1 text-sm text-slate-500 hover:text-slate-700 border-b-2 border-transparent hover:border-slate-700" 
                       href={'/page/' + item.slug}
                       onClick={handleClick}
@@ -80,6 +80,7 @@ export default function NavBar(props) {
               {
                 props.pages ? props.pages.map((item) => (
                   <Disclosure.Button
+                    key={item.slug}
                     as={Link}
                     href={`/page/${item.slug}`}
                     className="block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
