@@ -38,7 +38,7 @@ export default async function Page({params}) {
                 */
                 feature.properties.popup_image != '' && firstAttachment == params.slug ? 
                 (<img 
-                    src={feature.properties.popup_image} 
+                    src={process.env.MEDIA_ROOT + feature.properties.popup_image} 
                     alt="Feature thumbnail"
                     className="w-full h-auto mb-2" 
                 />) 
