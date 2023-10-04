@@ -28,6 +28,10 @@
       @apply font-light pb-6;
   }
 
+  main a {
+      @apply border-b border-fuchsia-600 text-fuchsia-600;
+  }
+
   blockquote {
       @apply px-8 italic font-extralight;
   }
