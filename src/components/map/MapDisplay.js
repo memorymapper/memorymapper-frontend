@@ -55,17 +55,22 @@ export default function MapDisplay(props) {
     }, [])
 
     useEffect(() => {
+        // Reset the map if the content panel is closed
+        if (map.current && map.current.loaded()) {
+            if (props.panelSize == panelClassNames.hidden) {
+                map.current.flyTo({center: props.mapCenter, zoom: props.mapZoom})
+            }
+        }
+    }, [props.panelSize])
+
+    useEffect(() => {
         // Pan the map to offset the center on the basis of the width of the panel
         if (map.current && map.current.loaded()) {
-            if (props.panelWidth == 'w-12') {
-                map.current.flyTo({center: props.mapCenter, zoom: props.mapZoom})
-                return
-            }
             if (props.panelOffset) {
                 map.current.easeTo({padding: {top: 0, right: 0, bottom: 0, left: props.panelOffset}, duration: 500})
             }
-        }
-    }, [props.panelOffset, props.panelWidth])
+        }   
+    }, [props.panelOffset])
 
     useEffect(() => {
         // Add the data to the map
@@ -212,9 +217,6 @@ export default function MapDisplay(props) {
                 })
 
                 if (features.length > 0) {
-                    /*if (props.panelWidth == 'sm:w-12') {
-                        props.setPanelWidth('sm:w-1/3')
-                    }*/
                     if (props.panelSize == panelClassNames.hidden) {
                         props.setPanelSize(panelClassNames.medium)
                     }
