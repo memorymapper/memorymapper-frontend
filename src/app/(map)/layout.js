@@ -32,7 +32,7 @@ export default function MapLayout({children}) {
                         <MapDisplay 
                             panelOffset={panelOffset} 
                             panelSize={panelSize}
-                            setPanelWidth={setPanelSize}
+                            setPanelSize={setPanelSize}
                             mapCenter={[siteConfig.MAP_CENTER_LONGITUDE, siteConfig.MAP_CENTER_LATITUDE]} 
                             mapZoom={siteConfig.ZOOM} 
                             apiKey={siteConfig.MAPTILER_KEY} 
