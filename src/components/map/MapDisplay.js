@@ -30,8 +30,10 @@ export default function MapDisplay(props) {
     const flatTagList = {}
 
     Object.keys(props.tagLists).forEach(key => {
-        Object.keys(props.tagLists[key].tags).forEach(tagId => {
-            flatTagList[tagId] = props.tagLists[key].tags[tagId]
+        const tagList = props.tagLists[key]
+        const tagNames = Object.keys(tagList.tags)
+        tagNames.forEach(tagId => {
+            flatTagList[tagId] = tagList.tags[tagId]
         })
     })
 

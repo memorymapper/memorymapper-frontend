@@ -60,19 +60,33 @@ export default function MapFilter(props) {
             </div>
             <div className={showTags ? "visible" : "hidden"}>
             {props.tagLists ? Object.keys(props.tagLists).map(key => {
-                const tagList = props.tagLists[key]
+                const tagObj = props.tagLists[key]
+                let tagList = Object.keys(tagObj.tags).map(t => ({...tagObj.tags[t], id: t}))
+                /* Put the tags in alphabetical order */
+                tagList.sort((a, b) => {
+                    let na = a.name.toLowerCase(), nb = b.name.toLowerCase()
+                    
+                    if (na < nb) {
+                        return -1
+                    }
+                    if (na > nb) {
+                        return 1
+                    }
+                    return 0
+                })
+                
                 return (
                     <div key={key} className="mb-3">
-                        <h5>{tagList.name}</h5>
-                        {Object.keys(tagList.tags).map(t => (
+                        <h5>{tagObj.name}</h5>
+                        {tagList.map(t => (
                                 <TagButton 
-                                    key={t} 
-                                    name={tagList.tags[t].name}
+                                    key={t.id} 
+                                    name={t.name}
                                     setActiveTags={props.setActiveTags}
                                     activeTags={props.activeTags}
-                                    id={t}
-                                    /* the active state from the grouped tagLists is ignored and mapped to the flat object containing the tag states instead. Why? because the grouped tagLists are used for layout but is fragile to manipulate, whilst the flat list is easy to parse. */
-                                    active={props.activeTags[t].active}
+                                    id={t.id}
+                                    /* the active state from the grouped tagLists is ignored and mapped to the flat object containing the tag states instead. Why? because the grouped tagLists are used for layout but is hard to manipulate, whilst the flat list is easy. */
+                                    active={props.activeTags[t.id].active}
                                     isFiltered={isTagFiltered}
                                     setIsFiltered={setIsTagFiltered}
                                 />
