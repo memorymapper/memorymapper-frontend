@@ -8,6 +8,7 @@ import { useContext } from 'react'
 import Search from "../search/Search"
 import { panelClassNames } from "@/app/providers"
 import { PanelSizeContext } from '@/app/providers'
+import { MapContext } from '@/app/providers'
 
 
 function classNames(...classes) {
@@ -18,9 +19,14 @@ function classNames(...classes) {
 export default function NavBar(props) {
 
   const {panelSize, setPanelSize} = useContext(PanelSizeContext)
+  const {map, mapContext} = useContext(MapContext)
 
   function handleClick(e) {
     setPanelSize(panelClassNames.medium)
+    if (map.current && map.current.loaded()) {
+      const mapCenter = [props.siteConfig.MAP_CENTER_LONGITUDE, props.siteConfig.MAP_CENTER_LATITUDE]
+      map.current.flyTo({center: mapCenter, zoom: props.siteConfig.ZOOM})
+    }
   }
 
 
@@ -32,7 +38,18 @@ export default function NavBar(props) {
             <div className="flex h-16 justify-stretch">
               <div className="flex px-2 lg:px-0">
                 <div className="flex flex-shrink-0 items-center">
-                  <Link href='/' onClick={handleClick}><h1 className='italic font-thin text-xl'>{props.siteConfig.SITE_TITLE}<span className='hidden md:inline'>: {props.siteConfig.SITE_SUBTITLE}</span></h1></Link>
+                    <div className="h-full flex items-center">
+                    <Link href='/' onClick={handleClick} className='h-12'>
+                      {
+                        props.siteConfig.LOGO_IMAGE != 'default.png'
+                        ? (<img src={`${process.env.NEXT_PUBLIC_MEDIA_ROOT}/media/${props.siteConfig.LOGO_IMAGE}`} className='w-12 h-auto' />)
+                        : null 
+                      }
+                    </Link>
+                    <Link href='/' onClick={handleClick}><h1 className='italic text-xl ml-6'>{props.siteConfig.SITE_TITLE}<span className='hidden md:inline'>: {props.siteConfig.SITE_SUBTITLE}</span></h1></Link>
+                    </div>
+                    
+                  
                 </div>
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-8 w-1/3 justify-end">
