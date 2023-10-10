@@ -7,9 +7,9 @@ export const MapContext = createContext()
 export const PanelSizeContext = createContext(null)
 
 export const panelClassNames = {
-    hidden: 'z-10 absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0 w-full sm:w-12 sm:h-full h-12',
+    hidden: 'z-10 absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0 w-full sm:w-12 sm:h-full h-24',
     medium: 'z-10 absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0 w-full sm:w-1/3 sm:h-full h-[calc(100%-1rem)]',
-    large: 'z-10 absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0 sm:w-1/2 sm:h-full h-[calc(100%-1rem)]'
+    large:  'z-10 absolute bottom-0 left-0 sm:relative pointer-events-auto bg-stone-50 p-6 border-t border-stone-200 sm:border-0 sm:w-1/2 sm:h-full h-[calc(100%-1rem)]'
 }
 
 

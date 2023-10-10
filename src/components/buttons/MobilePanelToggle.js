@@ -5,8 +5,6 @@ import { panelClassNames } from "@/app/providers"
 export default function MobilePanelToggle(props) {
 
     function handleClick(dir, setPanelSize) {
-
-        console.log(dir)
         
         switch (dir) {
             case 'up':
