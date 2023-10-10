@@ -161,6 +161,18 @@ export default function MapDisplay(props) {
                     }
                 })
 
+                map.current.on("touchstart", e => {
+                    const features = map.current.queryRenderedFeatures(e.point, {
+                      layers: ["points"],
+                    })
+                  
+                    if (features.length > 0) {
+                        const uuid = features[0].properties.uuid
+                        const slug = features[0].properties.attachments.split(',')[0]
+                        setActiveFeature({feature: uuid, slug: slug})
+                    }
+                })
+
 
                 // Change feature style on hover
                 let hoverStateId = null
