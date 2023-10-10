@@ -20,6 +20,10 @@
     @apply font-light mb-2 italic;
   }
 
+  main img {
+    @apply mr-3 float-left;
+  }
+
   main h5 {
     @apply font-light text-sm mb-2 italic;
   }
@@ -29,7 +33,7 @@
   }
 
   main a {
-      @apply border-b border-fuchsia-600 text-fuchsia-600;
+      @apply border-b border-sky-700 text-sky-700;
   }
 
   blockquote {
