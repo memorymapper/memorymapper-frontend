@@ -47,7 +47,8 @@ export default function MapDisplay(props) {
           style: `https://api.maptiler.com/maps/positron/style.json?key=${props.apiKey}`,
           //style: 'https://api.mapbox.com/styles/v1/chronocarto/clm6h762v00z401nz9kub3p8n?access_token=pk.eyJ1IjoiY2hyb25vY2FydG8iLCJhIjoiY2trbnRnajFvM2xocTJvcGF5czBsdGQ4byJ9.4AKwwY23PdK6ZD5lJUhaYQ',
           center: props.mapCenter,
-          zoom: props.mapZoom
+          zoom: props.mapZoom,
+          doubleClickZoom: false
         })
 
         
