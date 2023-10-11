@@ -26,7 +26,7 @@ export default function TabContent(props) {
             ) : null}
             {activeTabs.length > 1 ? (
                 <>
-                    <ContentPanelSelect tabs={props.tabs} />
+                    <ContentPanelSelect tabs={props.tabs} activeTabs={activeTabs} setActiveTabs={setActiveTabs} />
                     <div className="hidden sm:block">
                         <div className="border-b border-gray-200">
                             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
