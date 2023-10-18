@@ -77,8 +77,6 @@ export default function CommandPalette(props) {
         return { ...groups, [item.category]: [...(groups[item.category] || []), item] }
     }, {})
 
-  console.log(groups)
-
   return (
     <Transition.Root show={open} as={Fragment} afterLeave={() => setQuery('')} appear>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
