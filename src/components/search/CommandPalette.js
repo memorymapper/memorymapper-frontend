@@ -8,10 +8,16 @@ import { CommandPaletteContext } from '@/app/providers'
 import { ActiveFeatureContext } from '@/app/providers'
 import { MapContext } from '@/app/providers'
 
+let items = []
+
 async function onSearch(query, map, center, zoom) {
     if (query.length > 2) {
 
-      items = []
+        // Don't add to the array of search results, repopulate it entirely
+        // so there's a fresh set with every call to the search results API,
+        // cos otherwise you get a weird list
+
+        items = []
 
         map.current.flyTo({center:center, zoom: zoom})
 
@@ -29,11 +35,11 @@ async function onSearch(query, map, center, zoom) {
             if (ids.includes(result.id) == false) {
                 items.push({
                     id: result.id,
-                    name: result.place ? `${result.place}: ${result.name}`: `${result.name} (${result.description})`,
+                    name: result.place ? `${result.place}: ${result.name}`: `${result.name}`,
                     category: result.category,
                     url: `/feature/${result.uuid}/${result.slug}`,
                     uuid: result.uuid,
-                    slug: result.slug
+                    slug: result.slug,
                 })
             }
             if (items.length > 8) {
@@ -42,11 +48,6 @@ async function onSearch(query, map, center, zoom) {
         })
     }
 }
-
-let items = [
-  // { id: 1, name: 'Workflow Inc.', category: 'Clients', url: '#' },
-  // More items...
-]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -61,7 +62,7 @@ export default function CommandPalette(props) {
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    if (query.length <= 1) {
+    if (query.length < 2) {
         items = []
     }
     onSearch(query, map, props.mapCenter, props.mapZoom)
@@ -75,6 +76,8 @@ export default function CommandPalette(props) {
   const groups = filteredItems.reduce((groups, item) => {
         return { ...groups, [item.category]: [...(groups[item.category] || []), item] }
     }, {})
+
+  console.log(groups)
 
   return (
     <Transition.Root show={open} as={Fragment} afterLeave={() => setQuery('')} appear>
