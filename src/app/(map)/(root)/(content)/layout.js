@@ -1,7 +1,7 @@
 "use client"
 import { useRef, useEffect, useContext, Suspense } from 'react'
 import { PanelSizeContext } from '@/app/providers'
-import { PanelOffsetContext } from '@/app/(map)/layout'
+import { PanelOffsetContext } from '@/app/(map)/(root)/layout'
 import PanelToggle from '@/components/buttons/PanelToggle'
 import MobilePanelToggle from '@/components/buttons/MobilePanelToggle'
 

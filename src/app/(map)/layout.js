@@ -1,47 +1,48 @@
-"use client"
-import useSiteConfig from '@/apicalls/useSiteConfig'
-import { useState, createContext, useContext } from 'react'
-import MapDisplay from '@/components/map/MapDisplay'
-import CommandPalette from '@/components/search/CommandPalette'
-import { PanelSizeContext } from '../providers'
+import '../globals.css'
+import Providers from '@/app/providers'
+import NavBar from '@/components/nav/NavBar'
+
+const metadata = {
+  title: 'Memory Mapper',
+  description: 'A toolkit for mapping history and place',
+}
+
+async function getSiteConfig() {
+  const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/config/', {cache: 'no-cache'})
+
+  if (!res.ok) {
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error('Failed to fetch site config')
+  }
+
+  return res.json()
+}
+
+async function getPages() {
+  const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '1.0/pages/', {cache: 'no-cache'})
+
+  if (!res.ok) {
+      throw new Error('Failed to fetch page list')
+  }
+
+  return res.json()
+}
 
 
-export const SiteConfigContext = createContext(null)
-export const PanelOffsetContext = createContext(null)
+export default async function RootLayout({ children }) {
 
-export default function MapLayout({children}) {
+  const siteConfig = await getSiteConfig()
 
-    const [panelOffset, setPanelOffset] = useState(0)
+  const pages = await getPages()
 
-    const {panelSize, setPanelSize} = useContext(PanelSizeContext)
-    
-    const {siteConfig, isLoading, isError} = useSiteConfig()
-
-    if (isLoading) return <h1>Loading...</h1>
-    if (isError) return <h1>Error...</h1>
-
-    return (
-        <SiteConfigContext.Provider value={siteConfig}>
-            <PanelOffsetContext.Provider value={{panelOffset, setPanelOffset}}>
-                <CommandPalette 
-                    mapCenter={[siteConfig.MAP_CENTER_LONGITUDE, siteConfig.MAP_CENTER_LATITUDE]}
-                    mapZoom={siteConfig.ZOOM}  
-                />
-                <main className="h-[calc(100%-4rem)] block relative">
-                        { children }
-                        <MapDisplay 
-                            panelOffset={panelOffset} 
-                            panelSize={panelSize}
-                            setPanelSize={setPanelSize}
-                            mapCenter={[siteConfig.MAP_CENTER_LONGITUDE, siteConfig.MAP_CENTER_LATITUDE]} 
-                            mapZoom={siteConfig.ZOOM} 
-                            apiKey={siteConfig.MAPTILER_KEY} 
-                            tileJson={siteConfig.TILE_JSON_URL} 
-                            themes={siteConfig.themes} 
-                            tagLists={siteConfig.tagLists} 
-                        />
-                </main>
-            </PanelOffsetContext.Provider>
-        </SiteConfigContext.Provider>
-    )
+  return (
+    <html lang="en">
+      <body className="h-screen">
+        <Providers>
+          <NavBar pages={pages} siteConfig={siteConfig}/>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
 }
