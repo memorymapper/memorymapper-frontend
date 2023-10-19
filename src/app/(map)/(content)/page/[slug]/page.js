@@ -20,7 +20,7 @@ export default async function Page({params}) {
         {
             name: page.title,
             current: true,
-            body: sanitize(page.body)
+            body: sanitize(page.body, {USE_PROFILES: {html: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']})
         }
     ]
 
@@ -29,7 +29,7 @@ export default async function Page({params}) {
             {
                 name: s.title, 
                 current: false,
-                body: sanitize(s.body)
+                body: sanitize(s.body, {USE_PROFILES: {html: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']})
             }
         )
     ))

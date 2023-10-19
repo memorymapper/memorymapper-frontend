@@ -28,7 +28,7 @@ export default async function Page({params}) {
     // This is a bodge. Only show the popup image when the first attachment is active
     const firstAttachment = feature.properties.attachments.split(',')[0]
 
-    const clean = sanitize(attachment.body, {USE_PROFILES: {html: true}})
+    const clean = sanitize(attachment.body, {USE_PROFILES: {html: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']})
 
     return (
         <>
