@@ -40,6 +40,7 @@ async function onSearch(query, map, center, zoom) {
                     url: `/feature/${result.uuid}/${result.slug}`,
                     uuid: result.uuid,
                     slug: result.slug,
+                    headline: result.headline
                 })
             }
             if (items.length > 8) {
@@ -141,7 +142,9 @@ export default function CommandPalette(props) {
                                 classNames('cursor-default select-none px-4 py-2', active && 'bg-indigo-600 text-white')
                               }
                             >
-                              {item.name}
+                              {item.headline ? 
+                              <><b>{item.name}</b> | "...<span className='font-thin italic' dangerouslySetInnerHTML={{__html: item.headline}}></span>..."</> 
+                              : item.name}
                             </Combobox.Option>
                           ))}
                         </ul>
