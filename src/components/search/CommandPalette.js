@@ -143,7 +143,7 @@ export default function CommandPalette(props) {
                               }
                             >
                               {item.headline ? 
-                              <><b>{item.name}</b> | "...<span className='font-thin italic' dangerouslySetInnerHTML={{__html: item.headline}}></span>..."</> 
+                              (<><b>{item.name}</b> | &quot;...<span className='font-thin italic' dangerouslySetInnerHTML={{__html: item.headline}}></span>...&quot;</>)
                               : item.name}
                             </Combobox.Option>
                           ))}
