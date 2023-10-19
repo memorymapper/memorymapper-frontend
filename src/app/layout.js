@@ -1,6 +1,7 @@
 import './globals.css'
 import Providers from './providers'
 import NavBar from '@/components/nav/NavBar'
+import WelcomeModal from '@/components/content/WelcomeModal'
 
 export const metadata = {
   title: 'Memory Mapper',
