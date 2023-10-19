@@ -8,16 +8,12 @@ import { CommandPaletteContext } from '@/app/providers'
 import { ActiveFeatureContext } from '@/app/providers'
 import { MapContext } from '@/app/providers'
 
-let items = []
-
-async function onSearch(query, map, center, zoom) {
-    if (query.length > 2) {
+async function onSearch(query, items, setItems, map, center, zoom) {
+    if (query.length > 0) {
 
         // Don't add to the array of search results, repopulate it entirely
         // so there's a fresh set with every call to the search results API,
         // cos otherwise you get a weird list
-
-        items = []
 
         map.current.flyTo({center:center, zoom: zoom})
 
@@ -31,9 +27,11 @@ async function onSearch(query, map, center, zoom) {
 
         const ids = items.map((item) => item.id)
 
+        const results = []
+
         data.results.forEach((result) => {
             if (ids.includes(result.id) == false) {
-                items.push({
+                results.push({
                     id: result.id,
                     name: result.place ? `${result.place}: ${result.name}`: `${result.name}`,
                     category: result.category,
@@ -43,10 +41,13 @@ async function onSearch(query, map, center, zoom) {
                     headline: result.headline
                 })
             }
-            if (items.length > 8) {
-              items.pop()
+            if (results.length > 8) {
+              results.pop()
             }
         })
+
+        setItems(results)
+
     }
 }
 
@@ -61,12 +62,13 @@ export default function CommandPalette(props) {
   const {map} = useContext(MapContext)
   
   const [query, setQuery] = useState('')
+  const [items, setItems] = useState([])
 
   useEffect(() => {
     if (query.length < 2) {
-        items = []
+        setItems([])
     }
-    onSearch(query, map, props.mapCenter, props.mapZoom)
+    onSearch(query, items, setItems, map, props.mapCenter, props.mapZoom)
   }, [query])
 
   const filteredItems =
@@ -143,7 +145,7 @@ export default function CommandPalette(props) {
                               }
                             >
                               {item.headline ? 
-                              (<><b>{item.name}</b> | &quot;...<span className='font-thin italic' dangerouslySetInnerHTML={{__html: item.headline}}></span>...&quot;</>)
+                              (<span><b>{item.name}</b> | &quot;...<span className='font-thin italic' dangerouslySetInnerHTML={{__html: item.headline}}></span>...&quot;</span>)
                               : item.name}
                             </Combobox.Option>
                           ))}
