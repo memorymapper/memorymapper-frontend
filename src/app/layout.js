@@ -41,6 +41,7 @@ export default async function RootLayout({ children }) {
       <body className="h-screen">
         <Providers>
           <NavBar pages={pages} siteConfig={siteConfig}/>
+          <WelcomeModal />
           {children}
         </Providers>
       </body>
