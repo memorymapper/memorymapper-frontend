@@ -35,6 +35,7 @@ export default function WelcomeModal() {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <div>
                   <img src={splash.src} />
+                  <h2 className='text-xl italic text-center pt-2'>A European Literary Map of London</h2>
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
