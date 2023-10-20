@@ -238,6 +238,14 @@ export default function MapDisplay(props) {
         // If there is an activeFeature, fly to it and load the page
         if (map.current && map.current.loaded() && activeFeature) {
             if (activeFeature.feature) {
+
+                // TODO: coordinates are returned from search; maybe from page loads too? It's neater but'll need a bit of mucking about to work
+                if (activeFeature.coordinates) {
+                    map.current.flyTo({center: activeFeature.coordinates, zoom: 15})
+                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
+                    return
+                }
+
                 const features = map.current.querySourceFeatures('interactive', {
                     'sourceLayer': 'points',
                     'filter': ['==', ['get', 'uuid'], activeFeature.feature]

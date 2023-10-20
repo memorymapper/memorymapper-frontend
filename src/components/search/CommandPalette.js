@@ -38,7 +38,8 @@ async function onSearch(query, items, setItems, map, center, zoom) {
                     url: `/feature/${result.uuid}/${result.slug}`,
                     uuid: result.uuid,
                     slug: result.slug,
-                    headline: result.headline
+                    headline: result.headline,
+                    coordinates: result.coordinates
                 })
             }
             if (results.length > 8) {
@@ -107,7 +108,7 @@ export default function CommandPalette(props) {
           >
             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox onChange={(item) => {
-                        setActiveFeature({feature: item.uuid, slug: item.slug})
+                        setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates})
                         setOpen(false)
                     }
                 }>
