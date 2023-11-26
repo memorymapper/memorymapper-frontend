@@ -151,7 +151,7 @@ export default function MapDisplay(props) {
                 // Do stuff when you click on a feature
                 map.current.on("click", e => {
                     const features = map.current.queryRenderedFeatures(e.point, {
-                      layers: ["points"],
+                      layers: ["points", "points_labels"],
                     })
                   
                     if (features.length > 0) {
@@ -163,7 +163,7 @@ export default function MapDisplay(props) {
 
                 map.current.on("touchstart", e => {
                     const features = map.current.queryRenderedFeatures(e.point, {
-                      layers: ["points"],
+                      layers: ["points", , "points_labels"],
                     })
                   
                     if (features.length > 0) {
@@ -188,7 +188,7 @@ export default function MapDisplay(props) {
                                     sourceLayer: 'points'
                                 },
                                 {hover: false}
-                            );
+                            )
                         }
                         hoverStateId = e.features[0].id;
                         map.current.setFeatureState(
@@ -214,9 +214,21 @@ export default function MapDisplay(props) {
                                 sourceLayer: 'points'
                         },
                             {hover: false}
-                        );
+                        )
                     }
                     hoverStateId = null;
+                })
+
+                // Make the pointer change when labels are hovered (for now, don't change the style)
+                
+                map.current.on('mousemove', 'points_labels', (e) => {
+                    if (e.features.length > 0) {
+                        map.current.getCanvas().style.cursor = 'pointer'
+                    }
+                })
+
+                map.current.on('mouseleave', 'points_labels', (e) => {
+                    map.current.getCanvas().style.cursor = ''
                 })
             })
         }
@@ -226,6 +238,14 @@ export default function MapDisplay(props) {
         // If there is an activeFeature, fly to it and load the page
         if (map.current && map.current.loaded() && activeFeature) {
             if (activeFeature.feature) {
+
+                // TODO: coordinates are returned from search; maybe from page loads too? It's neater but'll need a bit of mucking about to work
+                if (activeFeature.coordinates) {
+                    map.current.flyTo({center: activeFeature.coordinates, zoom: 15})
+                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
+                    return
+                }
+
                 const features = map.current.querySourceFeatures('interactive', {
                     'sourceLayer': 'points',
                     'filter': ['==', ['get', 'uuid'], activeFeature.feature]

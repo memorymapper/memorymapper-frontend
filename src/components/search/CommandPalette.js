@@ -8,16 +8,12 @@ import { CommandPaletteContext } from '@/app/providers'
 import { ActiveFeatureContext } from '@/app/providers'
 import { MapContext } from '@/app/providers'
 
-let items = []
-
-async function onSearch(query, map, center, zoom) {
-    if (query.length > 2) {
+async function onSearch(query, items, setItems, map, center, zoom) {
+    if (query.length > 0) {
 
         // Don't add to the array of search results, repopulate it entirely
         // so there's a fresh set with every call to the search results API,
         // cos otherwise you get a weird list
-
-        items = []
 
         map.current.flyTo({center:center, zoom: zoom})
 
@@ -31,21 +27,28 @@ async function onSearch(query, map, center, zoom) {
 
         const ids = items.map((item) => item.id)
 
+        const results = []
+
         data.results.forEach((result) => {
             if (ids.includes(result.id) == false) {
-                items.push({
+                results.push({
                     id: result.id,
                     name: result.place ? `${result.place}: ${result.name}`: `${result.name}`,
                     category: result.category,
                     url: `/feature/${result.uuid}/${result.slug}`,
                     uuid: result.uuid,
                     slug: result.slug,
+                    headline: result.headline,
+                    coordinates: result.coordinates
                 })
             }
-            if (items.length > 8) {
-              items.pop()
+            if (results.length > 8) {
+              results.pop()
             }
         })
+
+        setItems(results)
+
     }
 }
 
@@ -60,12 +63,13 @@ export default function CommandPalette(props) {
   const {map} = useContext(MapContext)
   
   const [query, setQuery] = useState('')
+  const [items, setItems] = useState([])
 
   useEffect(() => {
     if (query.length < 2) {
-        items = []
+        setItems([])
     }
-    onSearch(query, map, props.mapCenter, props.mapZoom)
+    onSearch(query, items, setItems, map, props.mapCenter, props.mapZoom)
   }, [query])
 
   const filteredItems =
@@ -104,7 +108,7 @@ export default function CommandPalette(props) {
           >
             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox onChange={(item) => {
-                        setActiveFeature({feature: item.uuid, slug: item.slug})
+                        setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates})
                         setOpen(false)
                     }
                 }>
@@ -141,7 +145,9 @@ export default function CommandPalette(props) {
                                 classNames('cursor-default select-none px-4 py-2', active && 'bg-indigo-600 text-white')
                               }
                             >
-                              {item.name}
+                              {item.headline ? 
+                              (<span><b>{item.name}</b> | &quot;...<span className='font-thin italic' dangerouslySetInnerHTML={{__html: item.headline}}></span>...&quot;</span>)
+                              : item.name}
                             </Combobox.Option>
                           ))}
                         </ul>
