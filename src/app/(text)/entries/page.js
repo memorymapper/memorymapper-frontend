@@ -1,35 +1,35 @@
 'use client'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
-  Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { SiteConfigContext } from '@/app/providers'
 import useSiteConfig from '@/apicalls/useSiteConfig'
 import TextOnlyTagFilter from '@/components/filters/TextOnlyTagFilter'
 import TextOnlyThemeFilter from '@/components/filters/TextOnlyThemeFilter'
+import FeatureList from '@/components/content/FeatureList'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Page() {
+
+  const siteConfig = useContext(SiteConfigContext)
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const {siteConfig, isLoading, isError} = useSiteConfig()
+  const flatTagList = Object.keys(siteConfig.tagLists).map(
+    tagList => (Object.keys(siteConfig.tagLists[tagList].tags).map(tag => (siteConfig.tagLists[tagList].tags[tag].name)))
+  )[0]
 
-  if (isLoading) return <h1>Loading...</h1>
-  if (isError) return <h1>Error...</h1>
-  
+  const [activeThemes, setActiveThemes] = useState(Object.keys(siteConfig.themes).map(key => (key)))
+  const [activeTags, setActiveTags] = useState(flatTagList)
+  const [page, setPage] = useState(1)
+
   return (
-    <>
-      <div>
+      <div className='flex flex-row'>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
             <Transition.Child
@@ -84,7 +84,7 @@ export default function Page() {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                           <li><TextOnlyThemeFilter themes={siteConfig.themes}/></li>
+                           <li><TextOnlyThemeFilter themes={siteConfig.themes} activeThemes={activeThemes}/></li>
                           </ul>
                         </li>
                       </ul>
@@ -96,31 +96,50 @@ export default function Page() {
           </Dialog>
         </Transition.Root>
 
-        <div className="hidden lg:inset-y-0 lg:flex lg:w-72 lg:flex-col mt-10">
+        <div className="hidden lg:inset-y-0 lg:flex lg:w-72 lg:flex-col mt-10 p-8  self-start top-8 ">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-3">
             <nav className="flex flex-1 flex-col">
+              <div className='w-full'>
+                <h1 className="mx-0 px-0 mb-2 pb-1 text-2xl font-thin border-b border-gray-100 -mx-3">Filters</h1>
+              </div>
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    <li><TextOnlyThemeFilter themes={siteConfig.themes}/></li>
+                    <li>
+                      <TextOnlyThemeFilter 
+                        themes={siteConfig.themes} 
+                        activeThemes={activeThemes} 
+                        setActiveThemes={setActiveThemes}
+                        setPage={setPage}
+                      />
+                    </li>
                   </ul>
                 </li>
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {Object.keys(siteConfig.tagLists).map(key => (
-                        <TextOnlyTagFilter key={key} name={siteConfig.tagLists[key].name} tags={siteConfig.tagLists[key].tags} />
-                    ))}
+                    {siteConfig.tagLists 
+                    ? Object.keys(siteConfig.tagLists).map(key => (
+                        <TextOnlyTagFilter 
+                          key={key} 
+                          name={siteConfig.tagLists[key].name} tags={siteConfig.tagLists[key].tags}
+                          activeTags={activeTags}
+                          setActiveTags={setActiveTags}
+                          setPage={setPage}
+                        />
+                    ))
+                    : null }
                   </ul>
                 </li>
               </ul>
             </nav>
           </div>
         </div>
-        <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">{/* Your content */}</div>
+        <main className="py-10 grow mt-10">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <FeatureList activeThemes={activeThemes} activeTags={activeTags} page={page} setPage={setPage}/>
+          </div>
         </main>
       </div>
-    </>
   )
 }

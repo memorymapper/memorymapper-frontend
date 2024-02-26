@@ -4,6 +4,7 @@ import { PanelSizeContext } from '@/app/providers'
 import { PanelOffsetContext } from '@/app/(map)/(root)/layout'
 import PanelToggle from '@/components/buttons/PanelToggle'
 import MobilePanelToggle from '@/components/buttons/MobilePanelToggle'
+import LoadingSpinner from '@/components/content/LoadingSpinner'
 
 export default function ContentLayout({children}) {
     
@@ -24,7 +25,7 @@ export default function ContentLayout({children}) {
             ref={panelContainer}>
               <PanelToggle panelSize={panelSize} setPanelSize={setPanelSize} />
               <MobilePanelToggle panelSize={panelSize} setPanelSize={setPanelSize}  />
-              <Suspense fallback={<p>Loading...</p>}>
+              <Suspense fallback={<LoadingSpinner />}>
                 { children }
               </Suspense>
             </div>

@@ -43,4 +43,13 @@
   button {
     @apply font-light;
   }
+
+  main ol {
+    @apply list-decimal list-inside;
+  }
+
+  main ol li {
+    @apply mb-2;
+  }
+
 }

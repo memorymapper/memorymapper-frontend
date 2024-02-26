@@ -1,5 +1,7 @@
 import { sanitize } from 'isomorphic-dompurify'
 import SetActiveFeatureComponent from './SetActiveFeatureComponent'
+import AudioPlayer from '@/components/media/audio/AudioPlayer'
+import { notFound } from 'next/navigation'
 
 async function getAttachment(uuid, slug) {
 
@@ -16,6 +18,7 @@ async function getFeature(uuid) {
 
     if (!res.ok) {
         throw new Error('Failed to fetch feature')
+        
     }
 
     return res.json()
@@ -38,12 +41,16 @@ export default async function Page({params}) {
                 */
                 feature.properties.popup_image != '' && firstAttachment == params.slug ? 
                 (<img 
-                    src={feature.properties.popup_image} 
+                    src={process.env.MEDIA_ROOT + feature.properties.popup_image} 
                     alt="Feature thumbnail"
                     className="w-full h-auto mb-2" 
                 />) 
                 : null
-                
+            }
+            {
+                feature.properties.popup_audio_file && firstAttachment == params.slug ? 
+                (<div className='my-8'><AudioPlayer source={feature.properties.popup_audio_file} caption={feature.properties.popup_audio_title} /></div>)
+                : null
             }
             <SetActiveFeatureComponent />
             <div dangerouslySetInnerHTML={{__html: clean}}></div>

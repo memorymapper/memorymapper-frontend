@@ -1,5 +1,6 @@
 import ContentPanelSelect from "@/components/buttons/ContentPanelSelect"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
 async function getFeature(uuid) {
 
@@ -19,6 +20,10 @@ function classNames(...classes) {
 export default async function AttachmentLayout({params, children}) {
 
     const feature = await getFeature(params.uuid)
+
+    if (!feature) {
+        notFound()
+    }
 
     const tabs = feature.attachments.map((a, index) => (
         {

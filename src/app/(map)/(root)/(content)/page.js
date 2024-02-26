@@ -1,12 +1,11 @@
 import { sanitize, isSupported } from 'isomorphic-dompurify'
 
 async function getPage() {
-    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/pages/front/', {cache: 'no-cache'})
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/pages/instructions/', {cache: 'no-cache'})
 
     if (!res.ok) {
         throw new Error('Failed to fetch page')
     }
-
     return res.json()
 }
 

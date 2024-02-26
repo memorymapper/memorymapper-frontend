@@ -9,7 +9,6 @@ export default function Search(props) {
     const searchRef = useRef(null)
 
     const {setOpen} = useContext(CommandPaletteContext)
-    const {map} = useContext(MapContext)
 
     function onSearch(e) {
         e.preventDefault()

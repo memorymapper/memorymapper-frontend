@@ -1,67 +1,81 @@
 'use client'
-import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/24/outline'
+import { Fragment, useState, useContext } from 'react'
+import { Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import { sanitize } from 'isomorphic-dompurify'
+import useFrontPage from '@/apicalls/useFrontPage'
+import LoadingSpinner from './LoadingSpinner'
+import { WelcomeModalContext } from '@/app/providers'
 
-export default function WelcomeModal() {
-  const [open, setOpen] = useState(true)
+async function getPage() {
+    const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/pages/front/', {cache: 'no-cache'})
+
+    if (!res.ok) {
+        throw new Error('Failed to fetch page')
+    }
+
+    return res.json()
+}
+
+export default function WelcomeModal(props) {
+
+  // const [open, setOpen] = useState(true)
+
+  const {showWelcomeModal, setShowWelcomeModal} = useContext(WelcomeModalContext)
+
+
+  const {data, isError, isLoading} = useFrontPage()
+
+  if (isLoading) {
+      return <div className="w-full flex justify-center items-center"><div className="w-16 h-16"><LoadingSpinner className="text-gray-100"/></div></div>
+  }
+
+
+  // If there isn't a front page, just don't show it
+  if (isError) {
+      setShowWelcomeModal(false)
+      return
+  }
+
+  const clean = sanitize(data.body)
 
   return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={setOpen}>
-        <Transition.Child
-          as={Fragment}
+    <Transition show={showWelcomeModal} as={Fragment}
+    
           enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
+          enterFrom="h-0"
+          enterTo="h-full"
           leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </Transition.Child>
+          leaveFrom="h-full"
+          leaveTo="h-0"
+    >
+      <div className="modal fixed w-full h-full shadow top-0 left-0 flex items-center justify-center z-50" style={{'backgroundImage': 'url(' + process.env.NEXT_PUBLIC_MEDIA_ROOT + data.banner_image + ')', 'backgroundSize': 'cover'}}>
+        <div className="modal-container w-full h-full z-50 overflow-y-auto bg-black/75">
 
-        <div className="fixed inset-0 z-20 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-                <div>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                    <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
-                  </div>
-                  <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                      Payment successful
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-5 sm:mt-6">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => setOpen(false)}
-                  >
-                    Go back to dashboard
-                  </button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
+          <div className="modal-content mx-auto h-full text-left px-4 top-0 block absolute">
+            <div className="flex flex-row justify-center items-center h-5/6 text-white">
+              <div className="w-1/3 flex flex-col justify-end items-center">
+                {
+                  props.logo 
+                  ? <img src={process.env.NEXT_PUBLIC_MEDIA_ROOT + '/media/' + props.logo} className="w-1/2" />
+                  : <h1 className="text-xl">{props.siteTitle}</h1>
+                }
+                <h2 className='pt-2'>{props.siteSubtitle}</h2>
+              </div>
+              <div className="w-1/2">
+                <h3 className="text-2xl mb-4">{data.title}</h3>
+                <div dangerouslySetInnerHTML={{__html: clean}}></div>
+              </div>
+            </div>
+            <div className="flex justify-center pt-2">
+              <button className='w-10 h-10' onClick={() => {
+                setShowWelcomeModal(false)
+              }}><ChevronDownIcon className='text-white' /></button>
+            </div>
+
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+    </Transition>
   )
 }

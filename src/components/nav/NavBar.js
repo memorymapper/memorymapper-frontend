@@ -9,6 +9,7 @@ import Search from "../search/Search"
 import { panelClassNames } from "@/app/providers"
 import { PanelSizeContext } from '@/app/providers'
 import { MapContext } from '@/app/providers'
+import MMTDropDown from './MMTDropDown'
 
 
 function classNames(...classes) {
@@ -66,11 +67,9 @@ export default function NavBar(props) {
                   {/* disabled for the mo... <Link className="inline-flex items-center mx-4 pt-1 text-sm text-slate-500 hover:text-slate-700 border-b-2 border-transparent hover:border-slate-700" href={'/text'}>Text Site</Link>*/}
                 </div>
               <div className="flex flex-1 px-2 lg:ml-6 lg:justify-end">
-                <div className='hidden md:inline-flex'>
+                <div className='hidden md:inline-flex items-center'>
                   <Search />
-                </div>
-                <div className="w-6 h-full flex items-center hidden md:inline-flex">
-                  <a href="https://memorymapper.github.io/" target="_blank"><img src={MMLogo.src} alt="Memory Mapper" /></a>
+                  <MMTDropDown />
                 </div>
               </div>
               <div className="flex items-center lg:hidden">

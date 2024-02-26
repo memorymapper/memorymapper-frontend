@@ -7,6 +7,8 @@ import { Combobox, Dialog, Transition } from '@headlessui/react'
 import { CommandPaletteContext } from '@/app/providers'
 import { ActiveFeatureContext } from '@/app/providers'
 import { MapContext } from '@/app/providers'
+import { useRouter } from 'next/navigation'
+
 
 async function onSearch(query, items, setItems, map, center, zoom) {
     if (query.length > 0) {
@@ -14,8 +16,8 @@ async function onSearch(query, items, setItems, map, center, zoom) {
         // Don't add to the array of search results, repopulate it entirely
         // so there's a fresh set with every call to the search results API,
         // cos otherwise you get a weird list
-
-        map.current.flyTo({center:center, zoom: zoom})
+        
+        map.current ? map.current.flyTo({center:center, zoom: zoom}) : null
 
         const res = await fetch(process.env.NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT + '2.0/search/?q=' + query + '&limit=5', {cache: 'no-store'})
 
@@ -31,11 +33,13 @@ async function onSearch(query, items, setItems, map, center, zoom) {
 
         data.results.forEach((result) => {
             if (ids.includes(result.id) == false) {
+                let url = null
+                map.current ? url = `/feature/${result.uuid}/${result.slug}` : url = `/entries/${result.uuid}`
                 results.push({
                     id: result.id,
                     name: result.place ? `${result.place}: ${result.name}`: `${result.name}`,
                     category: result.category,
-                    url: `/feature/${result.uuid}/${result.slug}`,
+                    url: url,
                     uuid: result.uuid,
                     slug: result.slug,
                     headline: result.headline,
@@ -61,6 +65,8 @@ export default function CommandPalette(props) {
   const {setOpen} = useContext(CommandPaletteContext)
   const {setActiveFeature} = useContext(ActiveFeatureContext)
   const {map} = useContext(MapContext)
+  
+  const router = useRouter()
   
   const [query, setQuery] = useState('')
   const [items, setItems] = useState([])
@@ -108,8 +114,14 @@ export default function CommandPalette(props) {
           >
             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox onChange={(item) => {
-                        setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates})
-                        setOpen(false)
+                        if (map.current) {
+                          setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates})
+                          setOpen(false)
+                        }
+                        else {
+                          router.push(item.url)
+                          setOpen(false)
+                        }
                     }
                 }>
                 <div className="relative">

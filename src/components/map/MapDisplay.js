@@ -100,12 +100,14 @@ export default function MapDisplay(props) {
                 
                 themeStyles.push('#c1c1c1')
                 themeStrokeStyles.push('#c1c1c1')
-                
-                map.current.addSource('interactive', {
-                    'type': 'vector',
-                    'url': props.tileJson,
-                    'promoteId': 'uuid'
-                })
+
+                if (! map.current.getSource('interactive')) {
+                    map.current.addSource('interactive', {
+                        'type': 'vector',
+                        'url': props.tileJson,
+                        'promoteId': 'uuid'
+                    })
+                }   
                 
                 map.current.addLayer({
                     id: 'points',

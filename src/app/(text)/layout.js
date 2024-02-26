@@ -1,6 +1,7 @@
 import '@/app/globals.css'
 import Providers from '@/app/providers'
 import NavBar from '@/components/nav/NavBar'
+import CommandPalette from '@/components/search/CommandPalette'
 
 export const metadata = {
   title: 'Memory Mapper',
@@ -40,6 +41,10 @@ export default async function RootLayout({ children }) {
       <body className="h-screen">
         <Providers>
           <NavBar pages={pages} siteConfig={siteConfig}/>
+            <CommandPalette 
+              mapCenter={[siteConfig.MAP_CENTER_LONGITUDE, siteConfig.MAP_CENTER_LATITUDE]}
+              mapZoom={siteConfig.ZOOM}  
+            />
           {children}
         </Providers>
       </body>

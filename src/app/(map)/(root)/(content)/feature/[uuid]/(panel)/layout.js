@@ -1,6 +1,10 @@
 "use client"
 import { useParams } from 'next/navigation'
 import useFeature from "@/apicalls/useFeature"
+import { DocumentTextIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import LoadingSpinner from '@/components/content/LoadingSpinner'
+import { notFound } from 'next/navigation'
 
 export default function PanelLayout({children}) {
 
@@ -10,7 +14,7 @@ export default function PanelLayout({children}) {
 
     if (isLoading) {
         return (
-            <div>Loading...</div>
+            <div className='w-full flex justify-center items-center'><div className='w-16 h-16'><LoadingSpinner /></div></div>
         )
     }
 
@@ -20,9 +24,16 @@ export default function PanelLayout({children}) {
         )
     }
 
+    if (!feature) {
+        notFound()
+    }
+
     return (
         <div className="h-full overflow-hidden">
-            <h2 style={{color: feature.properties.color}}>{ feature ? feature.properties.name : null }</h2>
+            <div className="flex justify-between items-center h-16">
+                <h2 className='mb-0' style={{color: feature.properties.color}}>{ feature ? feature.properties.name : null }</h2>
+                <Link href={`/entries/${feature.properties.uuid}`} className='border-0'><DocumentTextIcon className='w-8 border-0' style={{color: feature.properties.color}}/></Link>
+            </div>
             {children}
         </div>
     )
