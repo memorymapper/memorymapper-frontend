@@ -10,7 +10,7 @@ export default function AudioPlayer(props) {
     const [playHead, setPlayHead] = useState('00:00:00')
 
     const sound = useRef(new Howl({
-        src: props.source,
+        src: process.env.NEXT_PUBLIC_MEDIA_ROOT + props.source,
         html5: true
     }))
 
