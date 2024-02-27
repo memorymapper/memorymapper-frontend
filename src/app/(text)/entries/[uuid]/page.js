@@ -4,13 +4,15 @@ import FeatureContentNav from '@/components/nav/FeatureContentNav'
 import { MapPinIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import AudioPlayer from '@/components/media/audio/AudioPlayer'
+import { notFound } from 'next/navigation'
 
 async function getFeature(uuid) {
 
     const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '2.0/features/' + uuid + '/attachments', {cache: 'no-store'})
 
     if (!res.ok) {
-        throw new Error('Failed to fetch feature')
+        //throw new Error('Failed to fetch feature')
+        notFound()
     }
 
     return res.json()
@@ -53,7 +55,7 @@ export default async function Page({params}) {
                 }
                 <div className='mt-16 border-t pt-12'>
                     <ul>
-                        {feature.attachments.map(att => (<FeatureContent doc={att}/ >))}
+                        {feature.attachments.map(att => (<FeatureContent doc={att} key={att.id} />))}
                     </ul>
                 </div>
             </main>

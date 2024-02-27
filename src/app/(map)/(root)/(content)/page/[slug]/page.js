@@ -1,7 +1,6 @@
 import { sanitize, isSupported } from 'isomorphic-dompurify'
 import TabContent from './TabContent'
 
-
 async function getPage(slug) {
 
     const res = await fetch(process.env.MEMORYMAPPER_ENDPOINT + '1.0/pages/' + slug,  {cache: 'no-cache'})

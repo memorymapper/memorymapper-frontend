@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import NotFound from '@/components/content/NotFound'
  
-export default function MapNotFound() {
+export default function TextNotFound() {
   return (
-    <NotFound link="/" />
+    <NotFound link="/entries/" />
   )
 }
