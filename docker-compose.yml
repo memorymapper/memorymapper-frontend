@@ -1,0 +1,58 @@
+version: '3.4'
+
+services:
+  memorymapperfrontend:
+    image: memorymapperfrontend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      no_cache: true
+    expose:
+      - 3000:3000
+    depends_on:
+      - memorymaptoolkit
+      - db
+    env_file:
+      - .env.local
+  db:
+    image: kartoza/postgis:16-3.4
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    env_file:
+      - ./.env.mmt_django
+    environment:
+      - POSTGRES_USER=${DJANGO_DB_USER}
+      - POSTGRES_DBNAME=${DJANGO_DB_NAME}
+      - POSTGRES_PASS=${DJANGO_DB_PASSWORD}
+    expose:
+      - 5432:5432
+  memorymaptoolkit:
+    image: ddunc23/memorymaptoolkit
+    env_file:
+      - ./.env.mmt_django
+    volumes:
+      - static:/app/static
+      - media:/app/media
+    expose:
+      - 8000:8000
+    environment:
+      - POSTGRES_USER=${DJANGO_DB_USER}
+      - POSTGRES_NAME=${DJANGO_DB_NAME}
+      - POSTGRES_PASSWORD=${DJANGO_DB_PASSWORD}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - memorymaptoolkit
+      - db
+    volumes:
+      - static:/usr/share/nginx/html/static
+      - media:/usr/share/nginx/html/media
+volumes:
+  postgres_data:
+  static:
+  media:

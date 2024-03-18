@@ -20,7 +20,10 @@ export default function TextOnlyTagFilter(props) {
             props.setActiveTags(newTags)
         } else {
             props.setActiveTags([...props.activeTags, tag])
-        }   
+        }
+        if (props.activeTags.length == 1 && props.activeTags[0] == tag) {
+            reset()
+        }
     }
 
     const reset = function(e) {

@@ -21,6 +21,9 @@ export default function TextOnlyThemeFilter(props) {
         } else { 
             props.setActiveThemes([...props.activeThemes, theme])
         }
+        if (props.activeThemes.length == 1 && props.activeThemes[0] == theme) {
+            reset()
+        }
     }
 
     const reset = function(e) {

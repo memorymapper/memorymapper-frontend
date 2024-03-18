@@ -36,7 +36,7 @@ export default function TabContent(props) {
                                     id={tab.name}
                                     className={classNames(
                                     tab.current
-                                        ? 'border-gray-500 text-indigo-600'
+                                        ? 'border-gray-500 text-sky-700'
                                         : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                                     'whitespace-nowrap border-b-2 py-4 px-1 text-sm font-light'
                                     )}
