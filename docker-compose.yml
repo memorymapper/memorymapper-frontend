@@ -12,8 +12,12 @@ services:
     depends_on:
       - memorymaptoolkit
       - db
-    env_file:
-      - .env.local
+    environment:
+      - NEXT_PUBLIC_MAPTILER_KEY=${NEXT_PUBLIC_MAPTILER_KEY}
+      - NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT=${NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT}
+      - MEDIA_ROOT=${MEDIA_ROOT}
+      - MEMORYMAPPER_ENDPOINT=${MEMORYMAPPER_ENDPOINT}
+      - NEXT_PUBLIC_MEDIA_ROOT=${NEXT_PUBLIC_MEDIA_ROOT}
   db:
     image: kartoza/postgis:16-3.4
     volumes:
