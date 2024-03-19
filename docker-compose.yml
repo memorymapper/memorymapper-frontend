@@ -22,8 +22,6 @@ services:
     image: kartoza/postgis:16-3.4
     volumes:
       - postgres_data:/var/lib/postgresql
-    env_file:
-      - ./.env.mmt_django
     environment:
       - POSTGRES_USER=${DJANGO_DB_USER}
       - POSTGRES_DBNAME=${DJANGO_DB_NAME}
@@ -32,8 +30,6 @@ services:
       - 5432:5432
   memorymaptoolkit:
     image: ddunc23/memorymaptoolkit
-    env_file:
-      - ./.env.mmt_django
     volumes:
       - static:/app/static
       - media:/app/media
@@ -44,6 +40,10 @@ services:
       - POSTGRES_NAME=${DJANGO_DB_NAME}
       - POSTGRES_PASSWORD=${DJANGO_DB_PASSWORD}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - DJANGO_SECURE_SSL_HOST=${DJANGO_SECURE_SSL_HOST}
+      - DJANGO_SESSION_COOKIE_SECURE=${DJANGO_SESSION_COOKIE_SECURE}
+      - DJANGO_CSRF_COOKIE_SECURE=${DJANGO_CSRF_COOKIE_SECURE}
     depends_on:
       - db
   nginx:
