@@ -21,6 +21,7 @@ export default function ResetFilterButton(props) {
 
         props.setIsThemeFiltered(false)
         props.setIsTagFiltered(false)
+        props.setIsReset(true)
     }
 
     return (

@@ -43,9 +43,10 @@ export default function MapLayout({children}) {
                             mapCenter={[siteConfig.MAP_CENTER_LONGITUDE, siteConfig.MAP_CENTER_LATITUDE]} 
                             mapZoom={siteConfig.ZOOM} 
                             apiKey={siteConfig.MAPTILER_KEY} 
-                            tileJson={siteConfig.TILE_JSON_URL} 
+                            tileJson={process.env.NEXT_PUBLIC_MEMORYMAPPER_TILEJSON} 
                             themes={siteConfig.themes} 
-                            tagLists={siteConfig.tagLists} 
+                            tagLists={siteConfig.tagLists}
+                            mapLayers={siteConfig.mapLayers}
                         />
                 </main>
             </PanelOffsetContext.Provider>

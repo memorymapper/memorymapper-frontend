@@ -8,13 +8,30 @@ import ResetFilterButton from "../buttons/ResetFiltersButton"
 export default function MapFilter(props) {
 
     const [showTags, setShowTags] = useState(false)
+    const [showMapLayers, setShowMapLayers] = useState(false)
 
     // These check if any themes or tags are active so the filters can be additive as soon as a user starts turning things on or off.
     const [isThemeFiltered, setIsThemeFiltered] = useState(false)
     const [isTagFiltered, setIsTagFiltered] = useState(false)
 
-    function handleClick(e) {
+    function tagPanelToggle(e) {
         showTags ? setShowTags(false) : setShowTags(true)
+    }
+
+    function mapLayerPanelToggle(e) {
+        showMapLayers ? setShowMapLayers(false) : setShowMapLayers(true)
+    }
+
+    function mapLayerToggle(e) {
+        const slug = e.target.getAttribute('id')
+        const newMapLayers = props.mapLayers.map(l => {
+            if (l.slug == slug) {
+                return {'name': l.name, 'slug': l.slug, 'visibility': l.visibility == 'visible' ? 'none' : 'visible'}
+            } else {
+                return l
+            }
+        })
+        props.setActiveLayers(newMapLayers)
     }
 
     return (
@@ -29,6 +46,7 @@ export default function MapFilter(props) {
                     tags={props.activeTags} 
                     setActiveThemes={props.setActiveThemes}
                     setActiveTags={props.setActiveTags}
+                    setIsReset={props.setIsReset}
                 />
                 <h3>Themes</h3>
                 {props.themes ? Object.keys(props.themes).map(key => {
@@ -55,8 +73,8 @@ export default function MapFilter(props) {
                         return (props.tagLists[key].name + ', ')
                     }
                     }) : null}</h4>
-                <ChevronRightIcon className={showTags ? "hidden h-7" : "visible h-7"} onClick={handleClick}/>
-                <ChevronDownIcon className={showTags ? "visible h-7" : "hidden h-7"} onClick={handleClick}/>
+                <ChevronRightIcon className={showTags ? "hidden h-7" : "visible h-7"} onClick={tagPanelToggle}/>
+                <ChevronDownIcon className={showTags ? "visible h-7" : "hidden h-7"} onClick={tagPanelToggle}/>
             </div>
             <div className={showTags ? "visible" : "hidden"}>
             {props.tagLists ? Object.keys(props.tagLists).map(key => {
@@ -95,6 +113,32 @@ export default function MapFilter(props) {
                     </div>
                 )
             }) : null}
+            </div>
+            {props.mapLayers.length > 0 ? (
+            <div className="flex flex-row">
+                <h4>Map Layers</h4>
+                <ChevronRightIcon className={showMapLayers ? "hidden h-7" : "visible h-7"} onClick={mapLayerPanelToggle}/>
+                <ChevronDownIcon className={showMapLayers ? "visible h-7" : "hidden h-7"} onClick={mapLayerPanelToggle}/>
+            </div>)
+            : null}
+            <div className={showMapLayers ? "visible" : "hidden"}>
+                <ul className="mb-2">
+                {props.mapLayers ? props.mapLayers.map(l => (
+                    <li key={l.slug} className="flex items-center">
+                        <input 
+                            type="checkbox" 
+                            className="form-input rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" 
+                            id={l.slug} name={l.name} 
+                            defaultChecked={l.visibility == 'visible' ? true : false}
+                            value={l.visibility}
+                            onChange={mapLayerToggle}
+                        />
+                        <label htmlFor={l.slug} className="text-sm ml-2">
+                            {l.name}
+                        </label>
+                    </li>
+                )): null}
+                </ul>
             </div>
         </div>
     )

@@ -115,6 +115,7 @@ export default function CommandPalette(props) {
             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox onChange={(item) => {
                         if (map.current) {
+                          // Todo: this needs to be updated to handle polygons and lines
                           setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates})
                           setOpen(false)
                         }
