@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   memorymapperfrontend:
-    image: memorymapperfrontend
+    image: ddunc23/memorymapperfrontend
     build:
       context: .
       dockerfile: ./Dockerfile
