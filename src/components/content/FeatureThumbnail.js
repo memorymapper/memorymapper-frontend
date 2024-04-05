@@ -23,8 +23,16 @@ export default function FeatureThumbnail(props) {
             </div>
             <ul>
                 <li><Link href={`/entries/${props.feature.properties.uuid}`} style={{color: props.feature.properties.color, 'borderColor': props.feature.properties.color}}>{props.feature.properties.name}</Link></li>
-                <li className="my-2 text-xs" style={{color: props.feature.properties.color}}>{props.feature.properties.theme}</li>
-                <li className='my-2'>{props.feature.properties.tag_str.split(',').map(el => (<span className="py-0.5 px-2 mr-2 bg-gray-200 text-xs rounded" key={el}>{el}</span>))}</li>
+                { 
+                    props.feature.properties.theme
+                        ? (<li className="my-2 text-xs" style={{color: props.feature.properties.color}}>{props.feature.properties.theme}</li>)
+                        : null
+                }
+                {   
+                    props.feature.properties.tag_str 
+                        ? (<li className='my-2'>{props.feature.properties.tag_str.split(',').map(el => (<span className="py-0.5 px-2 mr-2 bg-gray-200 text-xs rounded" key={el}>{el}</span>))}</li>) 
+                        : null
+                }
             </ul>
         </div>
     )

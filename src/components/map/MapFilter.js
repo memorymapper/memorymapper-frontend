@@ -65,7 +65,8 @@ export default function MapFilter(props) {
                     )
                 }) : null}
             </div>
-            <div className="flex flex-row">
+            { Object.keys(props.tagLists).length > 0 ? 
+            (<div className="flex flex-row">
                 <h4>Filter by {props.tagLists ? Object.keys(props.tagLists).map((key, index) => {
                     if (index == Object.keys(props.tagLists).length -1) {
                         return (props.tagLists[key].name)
@@ -75,7 +76,8 @@ export default function MapFilter(props) {
                     }) : null}</h4>
                 <ChevronRightIcon className={showTags ? "hidden h-7" : "visible h-7"} onClick={tagPanelToggle}/>
                 <ChevronDownIcon className={showTags ? "visible h-7" : "hidden h-7"} onClick={tagPanelToggle}/>
-            </div>
+            </div>)
+            : null }
             <div className={showTags ? "visible" : "hidden"}>
             {props.tagLists ? Object.keys(props.tagLists).map(key => {
                 const tagObj = props.tagLists[key]

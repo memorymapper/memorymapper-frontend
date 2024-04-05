@@ -4,13 +4,16 @@ import FeatureListResultsPage from "./FeatureListResultsPage"
 
 export default function FeatureList(props) {
 
-    // const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
 
     const pages = []
 
     for (let i=1; i <= props.page; i++) {
-        pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} activeThemes={props.activeThemes} activeTags={props.activeTags} key={i} />)
+        if (props.filterReset) {
+            pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} key={i} />)
+        } else {
+            pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} activeThemes={props.activeThemes} activeTags={props.activeTags} key={i} />)
+        }
     }
 
 
@@ -18,7 +21,7 @@ export default function FeatureList(props) {
         <>
             <Breadcrumbs pages={[{name: 'Entries', href: '/entries', current: true}]} />
             <div className="grid md:grid-cols-3 gap-4">
-                {pages}
+                {pages.length ? pages : null}
             </div>
             {hasMore ?
                 <button

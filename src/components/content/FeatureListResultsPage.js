@@ -19,17 +19,17 @@ export default function FeatureListResultsPage(props) {
     }
 
     if (isError) {
-        return <NotFound />
+        props.setHasMore(false)
+        return <NotFound link='/entries/' />
     }
 
-    if (data == 'No Results') {
-        return(<NotFound />)
+    if (data.features.length == 0) {
+        props.setHasMore(false)
+        return(<NotFound link='/entries/' />)
     }
 
     if (data.totalPages == props.page) {
         props.setHasMore(false)
-    } else {
-        props.setHasMore(true)
     }
 
     return (

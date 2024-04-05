@@ -1,5 +1,5 @@
 'use client'
-import { Fragment, useState, useContext } from 'react'
+import { Fragment, useState, useContext, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   XMarkIcon,
@@ -27,6 +27,15 @@ export default function Page() {
   const [activeThemes, setActiveThemes] = useState(Object.keys(siteConfig.themes).map(key => (key)))
   const [activeTags, setActiveTags] = useState(flatTagList)
   const [page, setPage] = useState(1)
+
+  const [totalThemes, setTotalThemes] = useState(Object.keys(siteConfig.themes).length)
+  const [totalTags, setTotalTags] = useState(flatTagList ? flatTagList.length : 0)
+
+  const [filterReset, setFilterReset] = useState(true)
+
+  useEffect(() => {
+    setFilterReset(totalThemes == activeThemes.length && totalTags == (activeTags ? activeTags.length : 0) ? true : false)
+  }, [filterReset, activeThemes])
 
   return (
       <div className='flex flex-row'>
@@ -137,7 +146,7 @@ export default function Page() {
         </div>
         <main className="py-10 grow mt-10">
           <div className="px-4 sm:px-6 lg:px-8">
-            <FeatureList activeThemes={activeThemes} activeTags={activeTags} page={page} setPage={setPage}/>
+            <FeatureList activeThemes={activeThemes} activeTags={activeTags} page={page} setPage={setPage} filterReset={filterReset}/>
           </div>
         </main>
       </div>

@@ -18,8 +18,6 @@ services:
       - MEDIA_ROOT=${MEDIA_ROOT}
       - MEMORYMAPPER_ENDPOINT=${MEMORYMAPPER_ENDPOINT}
       - NEXT_PUBLIC_MEDIA_ROOT=${NEXT_PUBLIC_MEDIA_ROOT}
-    env_file:
-      - .env
   db:
     image: kartoza/postgis:16-3.4
     volumes:
@@ -47,6 +45,8 @@ services:
       - DJANGO_SESSION_COOKIE_SECURE=${DJANGO_SESSION_COOKIE_SECURE}
       - DJANGO_CSRF_COOKIE_SECURE=${DJANGO_CSRF_COOKIE_SECURE}
       - DJANGO_DB_HOST=${DJANGO_DB_HOST}
+      - DJANGO_SUPERUSER=${DJANGO_SUPERUSER}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
     depends_on:
       - db
     entrypoint: /app/entrypoint.sh

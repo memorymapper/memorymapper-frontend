@@ -86,8 +86,8 @@ export default function NavBar(props) {
               </div>
             </div>
           </div>
-          <Disclosure.Panel className="sm:hidden">
-            <div className="border-t border-gray-200 pb-3 pt-4">
+          <Disclosure.Panel className="lg:hidden">
+            <div className="border-t border-gray-200 pb-3 pt-4 md:hidden">
               <div className="flex items-center">
                 <Search />
               </div>

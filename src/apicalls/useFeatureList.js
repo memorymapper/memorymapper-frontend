@@ -6,7 +6,11 @@ export default function useFeatureList(params) {
     let url = `${process.env.NEXT_PUBLIC_MEMORYMAPPER_ENDPOINT}2.0/features/?page=${params.page}`
 
     if (params.themes) {
-        url = url + `&themes=${params.themes}&tags=${params.tags}`
+        url = url + `&themes=${params.themes}`
+    }
+
+    if (params.tags) {
+        url = url + `&tags=${params.tags}`
     }
 
     /*

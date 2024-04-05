@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export default function NotFound(props) {
     return (
-        <main className="h-full">
+        <div className="h-full w-full col-span-3">
             <div className="text-center font-thin col-span-full flex flex-col content-center my-16">
                 <div className="w-full h-16 flex justify-center"><QuestionMarkCircleIcon className="h-full w-16 text-gray-300" /></div>
                 <div className="w-full h-16">
@@ -12,6 +12,6 @@ export default function NotFound(props) {
                 </div>
                 
             </div>
-        </main>
+        </div>
     )
 }
