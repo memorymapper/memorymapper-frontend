@@ -52,8 +52,8 @@ services:
     entrypoint: /app/entrypoint.sh
   nginx:
     build: ./nginx
-    ports:
-      - 1337:80
+    expose:
+      - 80:80
     depends_on:
       - memorymaptoolkit
       - db
