@@ -47,6 +47,7 @@ services:
       - DJANGO_DB_HOST=${DJANGO_DB_HOST}
       - DJANGO_SUPERUSER=${DJANGO_SUPERUSER}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - HTTP_X_FORWARDED_PROTO=${HTTP_X_FORWARDED_PROTO}
     depends_on:
       - db
     entrypoint: /app/entrypoint.sh
