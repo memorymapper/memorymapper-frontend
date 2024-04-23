@@ -350,7 +350,7 @@ export default function MapDisplay(props) {
 
                 // Make the pointer change when labels are hovered (for now, don't change the style)
                 
-                map.current.on('mousemove', 'points_labels', (e) => {
+                map.current.on('mouseenter', 'points_labels', (e) => {
                     if (e.features.length > 0) {
                         map.current.getCanvas().style.cursor = 'pointer'
                     }
@@ -365,7 +365,7 @@ export default function MapDisplay(props) {
 
                 let polygonHoverStateId = null
 
-                map.current.on('mouseenter', 'polygons', (e) => {
+                map.current.on('mousemove', 'polygons', (e) => {
                     if (e.features.length > 0) {
                         map.current.getCanvas().style.cursor = 'pointer'
                         if (polygonHoverStateId) {
@@ -411,7 +411,7 @@ export default function MapDisplay(props) {
 
                 let lineHoverStateId = null
 
-                map.current.on('mouseenter', 'lines', (e) => {
+                map.current.on('mousemove', 'lines', (e) => {
                     if (e.features.length > 0) {
                         map.current.getCanvas().style.cursor = 'pointer'
                         if (lineHoverStateId) {
