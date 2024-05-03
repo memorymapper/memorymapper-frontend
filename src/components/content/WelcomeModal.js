@@ -87,9 +87,9 @@ export default function WelcomeModal(props) {
                 </div>
               </div>
               <div className="w-full sm:w-1/2 flex bg-black/90 p-4 h-full sm:h-4/5 items-center">
-                  <div className='flex flex-col justify-center sm:pt-28'>
+                  <div className='flex flex-col justify-center sm:pt-28 h-full'>
                     <h3 className="text-2xl mb-4">{data.title}</h3>
-                    <div dangerouslySetInnerHTML={{__html: clean}}></div>
+                    <div dangerouslySetInnerHTML={{__html: clean}} className="h-4/5 overflow-y-auto"></div>
                     <div className='sm:hidden w-full flex justify-center'>
                       <button className='w-12 h-12 rounded-full' onClick={() => {
                           setShowWelcomeModal(false)
