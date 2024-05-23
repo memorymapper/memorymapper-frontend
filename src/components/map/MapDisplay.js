@@ -44,9 +44,15 @@ export default function MapDisplay(props) {
     const layerList = []
 
     props.mapLayers
-        ? props.mapLayers.forEach(l => {
-            l.visibility = 'visible'
-            layerList.push(l)
+        ? props.mapLayers.forEach((l, i) => {
+            if (props.mapLayerWidget == 'CHECKBOX') {
+                l.visibility = 'visible'
+                layerList.push(l)
+            }
+            else if (props.mapLayerWidget == 'RADIO') {
+                i == 0 ? l.visibility = 'visible' : l.visibility = 'none'
+                layerList.push(l)
+            }
         })
         : null
 
@@ -692,6 +698,7 @@ export default function MapDisplay(props) {
                 setIsReset={setIsReset}
                 mapLayers={activeLayers}
                 setActiveLayers={setActiveLayers}
+                mapLayerWidget={props.mapLayerWidget}
                 /*availableTagList={availableTagList}*/ />
         </div>
     )

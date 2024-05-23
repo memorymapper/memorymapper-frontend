@@ -24,14 +24,26 @@ export default function MapFilter(props) {
 
     function mapLayerToggle(e) {
         const slug = e.target.getAttribute('id')
-        const newMapLayers = props.mapLayers.map(l => {
-            if (l.slug == slug) {
-                return {'name': l.name, 'slug': l.slug, 'visibility': l.visibility == 'visible' ? 'none' : 'visible'}
-            } else {
-                return l
-            }
-        })
-        props.setActiveLayers(newMapLayers)
+        if (props.mapLayerWidget == 'CHECKBOX') {
+            const newMapLayers = props.mapLayers.map(l => {
+                if (l.slug == slug) {
+                    return {'name': l.name, 'slug': l.slug, 'visibility': l.visibility == 'visible' ? 'none' : 'visible'}
+                } else {
+                    return l
+                }
+            })
+            props.setActiveLayers(newMapLayers)
+        }
+        else if (props.mapLayerWidget == 'RADIO') {
+            const newMapLayers = props.mapLayers.map(l => {
+                if (l.slug == slug) {
+                    return {'name': l.name, 'slug': l.slug, 'visibility': 'visible'}
+                } else {
+                    return {'name': l.name, 'slug': l.slug, 'visibility': 'none'}
+                }
+            })
+            props.setActiveLayers(newMapLayers)
+        }
     }
 
     return (
@@ -78,7 +90,7 @@ export default function MapFilter(props) {
                 <ChevronDownIcon className={showTags ? "visible h-7" : "hidden h-7"} onClick={tagPanelToggle}/>
             </div>)
             : null }
-            <div className={showTags ? "visible" : "hidden"}>
+            <div className={showTags ? "visible h-40 overflow-auto" : "hidden"}>
             {props.tagLists ? Object.keys(props.tagLists).map(key => {
                 const tagObj = props.tagLists[key]
                 let tagList = Object.keys(tagObj.tags).map(t => ({...tagObj.tags[t], id: t}))
@@ -97,7 +109,6 @@ export default function MapFilter(props) {
                 
                 return (
                     <div key={key} className="mb-3">
-                        <h5>{tagObj.name}</h5>
                         {tagList.map(t => (
                                 <TagButton 
                                     key={t.id} 
@@ -124,6 +135,7 @@ export default function MapFilter(props) {
             </div>)
             : null}
             <div className={showMapLayers ? "visible" : "hidden"}>
+            {props.mapLayerWidget == 'CHECKBOX' ? (
                 <ul className="mb-2">
                 {props.mapLayers ? props.mapLayers.map(l => (
                     <li key={l.slug} className="flex items-center">
@@ -141,7 +153,27 @@ export default function MapFilter(props) {
                     </li>
                 )): null}
                 </ul>
-            </div>
+            ) : null}
+            {props.mapLayerWidget == 'RADIO' ? (
+                <ul className="mb-2">
+                    {props.mapLayers ? props.mapLayers.map((l, i) => (
+                        <li key={l.slug} className="flex items-center">
+                            <input 
+                                type="radio"
+                                name="mapLayers"
+                                id={l.slug}
+                                defaultChecked={l.visibility == 'visible' ? true : false}
+                                value={l.visibility}
+                                onChange={mapLayerToggle}
+                            />
+                            <label htmlFor={l.slug} className="text-sm ml-2">
+                                {l.name}
+                            </label>
+                        </li>
+                    )) : null}
+                </ul>
+            ) : null}
+            </div>      
         </div>
     )
 }

@@ -47,6 +47,7 @@ export default function MapLayout({children}) {
                             themes={siteConfig.themes} 
                             tagLists={siteConfig.tagLists}
                             mapLayers={siteConfig.mapLayers}
+                            mapLayerWidget={siteConfig.MAP_LAYER_WIDGET}
                         />
                 </main>
             </PanelOffsetContext.Provider>

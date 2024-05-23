@@ -47,7 +47,7 @@ export default function NavBar(props) {
                         : null 
                       }
                     </Link>
-                    <Link href='/' onClick={handleClick}><h1 className='italic text-xl ml-6'>{props.siteConfig.SITE_TITLE}<span className='hidden md:inline'>: {props.siteConfig.SITE_SUBTITLE}</span></h1></Link>
+                    <Link href='/' onClick={handleClick}><h1 className='italic text-xl ml-6'>{props.siteConfig.SITE_TITLE}{props.siteConfig.SITE_SUBTITLE ? (<span className='hidden md:inline'>: {props.siteConfig.SITE_SUBTITLE}</span>) : null}</h1></Link>
                     </div>
                     
                   
