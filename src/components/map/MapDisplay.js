@@ -43,6 +43,15 @@ export default function MapDisplay(props) {
 
     const layerList = []
 
+    let terrain;
+
+    
+    terrain = new maplibregl.TerrainControl({
+        source: 'terrain',
+        exaggeration: props.terrainExaggeration,
+    })
+
+
     props.mapLayers
         ? props.mapLayers.forEach((l, i) => {
             if (props.mapLayerWidget == 'CHECKBOX') {
@@ -63,10 +72,10 @@ export default function MapDisplay(props) {
       
         map.current = new maplibregl.Map({
           container: mapContainer.current,
-          style: `https://api.maptiler.com/maps/positron/style.json?key=${props.apiKey}`,
+          style: (props.mapTilerStyle ? props.mapTilerStyle + `?key=${props.apiKey}` : `https://api.maptiler.com/maps/positron/style.json?key=${props.apiKey}`),
           center: props.mapCenter,
           zoom: props.mapZoom,
-          doubleClickZoom: false
+          doubleClickZoom: false,
         })
 
         
@@ -97,6 +106,24 @@ export default function MapDisplay(props) {
         // Add the data to the map
         if (map.current) {
             map.current.on('load', () => {
+
+                if (! map.current.getSource('terrain')) {
+                    map.current.addSource('terrain', {
+                        'type': 'raster-dem',
+                        'url': `https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=${props.apiKey}`,
+                        'tileSize': 256
+                    })
+                }
+
+                
+
+                if (props.showTerrain) {
+                    if (! map.current.hasControl(terrain)) {  
+                        map.current.addControl(
+                            terrain
+                        );
+                    }
+                }
                 
                 // Load any additional raster layers, if present
                 props.mapLayers ? activeLayers.forEach(l => {    
@@ -128,7 +155,6 @@ export default function MapDisplay(props) {
 
                     const hslColor = hexToHSL(props.themes[key].color)
                     const hslString = hslToString(hslColor.h, hslColor.s, hslColor.l + 10)
-
                     themeStrokeStyles.push(['==', ['to-number', ['get', 'theme_id']], ['to-number', key]], hslString)
 
                 })
@@ -608,6 +634,20 @@ export default function MapDisplay(props) {
             }
         }
     }, [map, activeFeature, props.apiKey])
+
+
+    /*
+    useEffect(()=> {
+        if (map.current && map.current.loaded()) {
+            if (! map.current.hasControl(terrain)) {  
+                map.current.addControl(
+                    terrain
+                );
+            }
+        }
+    }, [map])
+    */
+
 
     useEffect(() => {
         // Apply the map filters when they are updated

@@ -48,6 +48,8 @@ export default function MapLayout({children}) {
                             tagLists={siteConfig.tagLists}
                             mapLayers={siteConfig.mapLayers}
                             mapLayerWidget={siteConfig.MAP_LAYER_WIDGET}
+                            showTerrain={siteConfig.SHOW_TERRAIN}
+                            terrainExaggeration={siteConfig.TERRAIN_EXAGGERATION}
                         />
                 </main>
             </PanelOffsetContext.Provider>
