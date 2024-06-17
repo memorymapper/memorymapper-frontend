@@ -171,7 +171,6 @@ export default function MapDisplay(props) {
                 }
                 
                 if (! map.current.getLayer('points')) {
-
                     map.current.addLayer({
                         id: 'points',
                         source: 'interactive',
@@ -210,6 +209,31 @@ export default function MapDisplay(props) {
                             'text-color': 'black',
                             'text-halo-width': 3,
                             'text-halo-color': 'rgba(235,235,235,0.8)'
+                        }
+                    })
+                }
+
+                if (! map.current.getLayer('multipoints')) {
+                    map.current.addLayer({
+                        id: 'multipoints',
+                        source: 'interactive',
+                        'source-layer': 'multipoints',
+                        type: 'circle',
+                        paint: {
+                            'circle-color': themeStyles,
+                            'circle-stroke-width': [
+                                'case',
+                                ['boolean', ['feature-state', 'hover'], ['feature-state', 'active'], false],
+                                5,
+                                4
+                            ],
+                            'circle-stroke-color': themeStrokeStyles,
+                            'circle-stroke-opacity': [
+                                'case',
+                                ['boolean', ['feature-state', 'hover'], ['feature-state', 'active'], false],
+                                1,
+                                0.5
+                            ]
                         }
                     })
                 }

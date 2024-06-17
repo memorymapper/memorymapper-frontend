@@ -40,5 +40,4 @@ next-env.d.ts
 .vscode/
 
 # Django stuff
-
 .env.mmt_django
