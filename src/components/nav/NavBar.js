@@ -43,11 +43,11 @@ export default function NavBar(props) {
                     <Link href='/' onClick={handleClick} className='h-12'>
                       {
                         props.siteConfig.LOGO_IMAGE != 'default.png'
-                        ? (<img src={`${process.env.NEXT_PUBLIC_MEDIA_ROOT}/media/${props.siteConfig.LOGO_IMAGE}`} className='w-12 h-auto' />)
+                        ? (<img src={`${process.env.NEXT_PUBLIC_MEDIA_ROOT}/media/${props.siteConfig.LOGO_IMAGE}`} className='w-12 h-auto  mr-6' />)
                         : null 
                       }
                     </Link>
-                    <Link href='/' onClick={handleClick}><h1 className='italic text-xl ml-6'>{props.siteConfig.SITE_TITLE}{props.siteConfig.SITE_SUBTITLE ? (<span className='hidden md:inline'>: {props.siteConfig.SITE_SUBTITLE}</span>) : null}</h1></Link>
+                    <Link href='/' onClick={handleClick}><h1 className='italic text-xl'>{props.siteConfig.SITE_TITLE}{props.siteConfig.SITE_SUBTITLE ? (<span className='hidden md:inline'>: {props.siteConfig.SITE_SUBTITLE}</span>) : null}</h1></Link>
                     </div>
                     
                   

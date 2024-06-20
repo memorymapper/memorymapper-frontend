@@ -78,8 +78,6 @@ export default function MapDisplay(props) {
           doubleClickZoom: false,
         })
 
-        
-      
         map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
 
     }, [])
@@ -114,8 +112,6 @@ export default function MapDisplay(props) {
                         'tileSize': 256
                     })
                 }
-
-                
 
                 if (props.showTerrain) {
                     if (! map.current.hasControl(terrain)) {  
@@ -321,7 +317,6 @@ export default function MapDisplay(props) {
                     // Because this useEffect loads with the map, activeFeature isn't populated yet, so you can't toggle the highlight. TODO: it'll do for noo, but sort out a workaround.
 
                     /*if (activeFeature) {
-                        console.log('fired')
                         for (const l in contentLayers) {
                             map.current.setFeatureState(
                                 {
@@ -336,7 +331,7 @@ export default function MapDisplay(props) {
                     }*/
 
                     const features = map.current.queryRenderedFeatures(e.point, {
-                      layers: ["points", "points_labels", "polygons", "lines", "lines_labels"],
+                      layers: ["points", "multipoints", "points_labels", "polygons", "lines", "lines_labels"],
                     })
 
                     if (features.length > 0) {
@@ -348,7 +343,7 @@ export default function MapDisplay(props) {
 
                 map.current.on("touchstart", e => {
                     const features = map.current.queryRenderedFeatures(e.point, {
-                      layers: ["points", "points_labels", "polygons", "lines", "lines_labels"],
+                      layers: ["points", "multipoints", "points_labels", "polygons", "lines", "lines_labels"],
                     })
                   
                     if (features.length > 0) {
@@ -414,6 +409,50 @@ export default function MapDisplay(props) {
 
                 map.current.on('mouseleave', 'points_labels', (e) => {
                     map.current.getCanvas().style.cursor = ''
+                })
+
+                // Multipoints
+
+                map.current.on('mouseenter', 'multipoints', (e) => {
+                    if (e.features.length > 0) {
+                        map.current.getCanvas().style.cursor = 'pointer'
+                        if (pointHoverStateId) {
+                            map.current.setFeatureState(
+                                {
+                                    source: 'interactive', 
+                                    id: pointHoverStateId,
+                                    sourceLayer: 'points'
+                                },
+                                {hover: false}
+                            )
+                        }
+                        pointHoverStateId = e.features[0].id;
+                        map.current.setFeatureState(
+                            {
+                                source: 'interactive', 
+                                id: pointHoverStateId,
+                                sourceLayer: 'points'
+                            },
+                            {hover: true}
+                        );
+                    }
+                })
+        
+                // When the mouse leaves the points layer, update the feature state of the
+                // previously hovered feature.
+                map.current.on('mouseleave', 'multipoints', () => {
+                    if (pointHoverStateId) {
+                        map.current.getCanvas().style.cursor = ''
+                        map.current.setFeatureState(
+                            {
+                                source: 'interactive',
+                                id: pointHoverStateId,
+                                sourceLayer: 'points'
+                        },
+                            {hover: false}
+                        )
+                    }
+                    pointHoverStateId = null;
                 })
 
 
@@ -537,7 +576,7 @@ export default function MapDisplay(props) {
         if (map.current && map.current.loaded() && activeFeature) {
             if (activeFeature.feature) {
 
-                // TODO: coordinates are returned from search interface; maybe from page loads too? It's neater but'll need a bit of mucking about to work
+                // The following bit of logic handles results from search, as activeFeature has coordinates as it comes from the server. TODO: coordinates are returned from search interface, but maybe from page loads too? It's neater but'll need a bit of mucking about to work
 
                 // If the feature returned from anywhere other than the map is a point, indicated by the fact that the first element is a number...
                 if (activeFeature.coordinates) {
@@ -579,9 +618,15 @@ export default function MapDisplay(props) {
                     }
                 }
 
+                // Get the feature and its coordinates if clicked on from the map. TODO: Could you add the coords directly to the activeFeature on click?
                 // If you don't have the coordinates needed, find where to zoom to from the activeFeature uuid
                 const points = map.current.querySourceFeatures('interactive', {
                     'sourceLayer': 'points',
+                    'filter': ['==', ['get', 'uuid'], activeFeature.feature]
+                })
+
+                const multipoints = map.current.querySourceFeatures('interactive', {
+                    'sourceLayer': 'multipoints',
                     'filter': ['==', ['get', 'uuid'], activeFeature.feature]
                 })
 
@@ -650,6 +695,29 @@ export default function MapDisplay(props) {
                             source: 'interactive', 
                             id: activeFeature.feature,
                             sourceLayer: 'lines'
+                        },
+                        {active: true}
+                    )
+                }
+
+                if (multipoints.length > 0) {
+                    if (props.panelSize == panelClassNames.hidden) {
+                        props.setPanelSize(panelClassNames.medium)
+                    }
+                    
+                    const coordinates = multipoints[0].geometry.coordinates
+
+                    const bounds = coordinates.reduce((bounds, coord) => {
+                        return bounds.extend(coord);
+                    }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]))
+
+                    map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
+                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
+                    map.current.setFeatureState(
+                        {
+                            source: 'interactive', 
+                            id: activeFeature.feature,
+                            sourceLayer: 'multipoints'
                         },
                         {active: true}
                     )
