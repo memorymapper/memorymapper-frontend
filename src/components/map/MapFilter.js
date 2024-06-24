@@ -91,7 +91,7 @@ export default function MapFilter(props) {
             </div>)
             : null }
             <div className={showTags ? "visible h-40 overflow-auto" : "hidden"}>
-            {props.tagLists ? Object.keys(props.tagLists).map(key => {
+            {props.tagLists ? Object.keys(props.tagLists).map((key, i) => {
                 const tagObj = props.tagLists[key]
                 let tagList = Object.keys(tagObj.tags).map(t => ({...tagObj.tags[t], id: t}))
                 /* Put the tags in alphabetical order */
@@ -109,6 +109,7 @@ export default function MapFilter(props) {
                 
                 return (
                     <div key={key} className="mb-3">
+                        {i == 0 ? null : <h5>{tagObj.name}</h5>}
                         {tagList.map(t => (
                                 <TagButton 
                                     key={t.id} 

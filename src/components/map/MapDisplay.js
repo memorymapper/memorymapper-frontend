@@ -199,6 +199,7 @@ export default function MapDisplay(props) {
                             'text-field': ['get', 'name'],
                             'text-anchor': 'left',
                             'text-size': 12,
+                            'text-justify': 'left',
                             'text-offset': [1, 0]
                         },
                         paint: {
@@ -230,6 +231,25 @@ export default function MapDisplay(props) {
                                 1,
                                 0.5
                             ]
+                        }
+                    })
+
+                    map.current.addLayer({
+                        id: 'multipoints_labels',
+                        source: 'interactive',
+                        'source-layer': 'multipoints',
+                        type: 'symbol',
+                        layout: {
+                            'text-field': ['get', 'name'],
+                            'text-anchor': 'left',
+                            'text-size': 12,
+                            'text-justify': 'left',
+                            'text-offset': [1, 0]
+                        },
+                        paint: {
+                            'text-color': 'black',
+                            'text-halo-width': 3,
+                            'text-halo-color': 'rgba(235,235,235,0.8)'
                         }
                     })
                 }
@@ -413,25 +433,27 @@ export default function MapDisplay(props) {
 
                 // Multipoints
 
+                let multiPointHoverStateId = null
+                
                 map.current.on('mouseenter', 'multipoints', (e) => {
                     if (e.features.length > 0) {
                         map.current.getCanvas().style.cursor = 'pointer'
-                        if (pointHoverStateId) {
+                        if (multiPointHoverStateId) {
                             map.current.setFeatureState(
                                 {
                                     source: 'interactive', 
-                                    id: pointHoverStateId,
-                                    sourceLayer: 'points'
+                                    id: multiPointHoverStateId,
+                                    sourceLayer: 'multipoints'
                                 },
                                 {hover: false}
                             )
                         }
-                        pointHoverStateId = e.features[0].id;
+                        multiPointHoverStateId = e.features[0].id;
                         map.current.setFeatureState(
                             {
                                 source: 'interactive', 
-                                id: pointHoverStateId,
-                                sourceLayer: 'points'
+                                id: multiPointHoverStateId,
+                                sourceLayer: 'multipoints'
                             },
                             {hover: true}
                         );
@@ -441,18 +463,18 @@ export default function MapDisplay(props) {
                 // When the mouse leaves the points layer, update the feature state of the
                 // previously hovered feature.
                 map.current.on('mouseleave', 'multipoints', () => {
-                    if (pointHoverStateId) {
+                    if (multiPointHoverStateId) {
                         map.current.getCanvas().style.cursor = ''
                         map.current.setFeatureState(
                             {
                                 source: 'interactive',
-                                id: pointHoverStateId,
-                                sourceLayer: 'points'
+                                id: multiPointHoverStateId,
+                                sourceLayer: 'multipoints'
                         },
                             {hover: false}
                         )
                     }
-                    pointHoverStateId = null;
+                    multiPointHoverStateId = null;
                 })
 
 
@@ -707,12 +729,16 @@ export default function MapDisplay(props) {
                     
                     const coordinates = multipoints[0].geometry.coordinates
 
+                    /*
                     const bounds = coordinates.reduce((bounds, coord) => {
                         return bounds.extend(coord);
                     }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]))
 
                     map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
+                    */
+
                     router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
+                    
                     map.current.setFeatureState(
                         {
                             source: 'interactive', 
@@ -750,6 +776,8 @@ export default function MapDisplay(props) {
             if (isReset) {
                 map.current.setFilter('points')
                 map.current.setFilter('points_labels')
+                map.current.setFilter('multipoints')
+                map.current.setFilter('multipoints_labels')
                 map.current.setFilter('polygons')
                 map.current.setFilter('polygons_labels')
                 map.current.setFilter('lines')
@@ -794,6 +822,8 @@ export default function MapDisplay(props) {
                         
             map.current.setFilter('points', allFilters)
             map.current.setFilter('points_labels', allFilters)
+            map.current.setFilter('multipoints', allFilters)
+            map.current.setFilter('multipoints_labels', allFilters)
             map.current.setFilter('polygons', allFilters)
             map.current.setFilter('polygons_labels', allFilters)
             map.current.setFilter('lines', allFilters)
