@@ -29,7 +29,7 @@ services:
     expose:
       - 5432:5432
   memorymaptoolkit:
-    image: ddunc23/memorymaptoolkit
+    image: ddunc23/memorymaptoolkit:latest
     volumes:
       - static:/app/static
       - media:/app/media
