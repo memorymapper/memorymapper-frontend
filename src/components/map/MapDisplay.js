@@ -12,6 +12,8 @@ import { panelClassNames } from '@/app/providers'
 
 export default function MapDisplay(props) {
 
+    // Main map display logic...
+
     const mapContainer = useRef(null)
     const {map} = useContext(MapContext)
 
