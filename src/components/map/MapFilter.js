@@ -172,6 +172,19 @@ export default function MapFilter(props) {
                             </label>
                         </li>
                     )) : null}
+                    <li key="none" className="flex items-center">
+                        <input 
+                            type="radio"
+                            name="mapLayers"
+                            id="none"
+                            defaultChecked={false}
+                            value="none"
+                            onChange={mapLayerToggle}
+                        />
+                        <label htmlFor="none" className="text-sm ml-2">
+                            None
+                        </label>
+                    </li>
                 </ul>
             ) : null}
             </div>      

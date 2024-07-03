@@ -43,10 +43,7 @@ export default function MapDisplay(props) {
 
     const [activeTags, setActiveTags] = useState(flatTagList)
 
-    const layerList = []
-
     let terrain;
-
     
     terrain = new maplibregl.TerrainControl({
         source: 'terrain',
@@ -54,6 +51,8 @@ export default function MapDisplay(props) {
     })
 
 
+    const layerList = []
+    
     props.mapLayers
         ? props.mapLayers.forEach((l, i) => {
             if (props.mapLayerWidget == 'CHECKBOX') {
