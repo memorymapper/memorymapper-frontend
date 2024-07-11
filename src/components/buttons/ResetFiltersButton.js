@@ -26,7 +26,7 @@ export default function ResetFilterButton(props) {
 
     return (
         <button 
-            className="bg-gray-200 py-0.5 px-1 rounded-sm absolute top-2 right-2 text-xs disabled:bg-gray-100 disabled:text-gray-200"
+            className="bg-gray-200 py-1 h-full px-1 rounded-sm text-xs disabled:bg-gray-100 disabled:text-gray-200"
             onClick={handleClick}
             disabled={props.isThemeFiltered || props.isTagFiltered ? false : true}
         >

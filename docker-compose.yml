@@ -33,6 +33,7 @@ services:
     volumes:
       - static:/app/static
       - media:/app/media
+      - backups:/app/backups
     expose:
       - 8000:8000
     environment:
@@ -65,3 +66,4 @@ volumes:
   postgres_data:
   static:
   media:
+  backups:
