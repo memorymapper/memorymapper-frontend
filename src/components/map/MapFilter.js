@@ -56,19 +56,17 @@ export default function MapFilter(props) {
             <div className="border-b border-stone-100 flex flex-row justify-between items-center">
                 <h3 className="">Filters</h3>
                 <div className="flex flex-row justify-between h-full mb-2 space-x-1">
-                    <div className={showPanel ? "visible" : "hidden"}>
-                        <ResetFilterButton 
-                            isThemeFiltered={isThemeFiltered} 
-                            isTagFiltered={isTagFiltered} 
-                            setIsThemeFiltered={setIsThemeFiltered} 
-                            setIsTagFiltered={setIsTagFiltered} 
-                            themes={props.themes} 
-                            tags={props.activeTags} 
-                            setActiveThemes={props.setActiveThemes}
-                            setActiveTags={props.setActiveTags}
-                            setIsReset={props.setIsReset}
-                        />
-                    </div>
+                    <ResetFilterButton 
+                        isThemeFiltered={isThemeFiltered} 
+                        isTagFiltered={isTagFiltered} 
+                        setIsThemeFiltered={setIsThemeFiltered} 
+                        setIsTagFiltered={setIsTagFiltered} 
+                        themes={props.themes} 
+                        tags={props.activeTags} 
+                        setActiveThemes={props.setActiveThemes}
+                        setActiveTags={props.setActiveTags}
+                        setIsReset={props.setIsReset}
+                    />
                     <button 
                 className={showPanel ? "visible bg-gray-200 rounded-sm text-xs p-1 disabled:bg-gray-100 disabled:text-gray-200" : "hidden"} onClick={panelToggle}>Hide</button>
                     <button 

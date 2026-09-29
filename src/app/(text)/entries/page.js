@@ -20,9 +20,11 @@ export default function Page() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const flatTagList = Object.keys(siteConfig.tagLists).map(
+  /* const flatTagList = Object.keys(siteConfig.tagLists).map(
     tagList => (Object.keys(siteConfig.tagLists[tagList].tags).map(tag => (siteConfig.tagLists[tagList].tags[tag].name)))
-  )[0]
+  )[0] */
+
+  const flatTagList = siteConfig.allTags
 
   const [activeThemes, setActiveThemes] = useState(Object.keys(siteConfig.themes).map(key => (key)))
   const [activeTags, setActiveTags] = useState(flatTagList)
@@ -34,11 +36,11 @@ export default function Page() {
   const [filterReset, setFilterReset] = useState(true)
 
   useEffect(() => {
-    setFilterReset(totalThemes == activeThemes.length && totalTags == (activeTags ? activeTags.length : 0) ? true : false)
-  }, [filterReset, activeThemes])
+    setFilterReset((totalThemes == activeThemes.length) && (activeTags.length == totalTags))
+  }, [filterReset, activeThemes, activeTags])
 
   return (
-      <div className='flex flex-row'>
+      <div className='flex flex-row w-full'>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
             <Transition.Child
@@ -105,16 +107,16 @@ export default function Page() {
           </Dialog>
         </Transition.Root>
 
-        <div className="hidden lg:inset-y-0 lg:flex lg:w-72 lg:flex-col mt-10 p-8  self-start top-8 ">
+        <div className="hidden lg:flex lg:w-1/5 lg:flex-col mt-10 pt-8 pl-4 self-start top-8 ">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-3">
-            <nav className="flex flex-1 flex-col">
-              <div className='w-full'>
-                <h1 className="mx-0 px-0 mb-2 pb-1 text-2xl font-thin border-b border-gray-100 -mx-3">Filters</h1>
-              </div>
+          <div className="flex flex-col gap-y-5 overflow-y-auto bg-white">
+            <nav className="flex flex-col">
+              
+              <h2 className="mx-0 px-0 mb-2 pb-1 text-2xl font-thin border-b border-gray-100">Filters</h2>
+              
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
-                  <ul role="list" className="-mx-2 space-y-1">
+                  <ul role="list" className="space-y-1">
                     <li>
                       <TextOnlyThemeFilter 
                         themes={siteConfig.themes} 
@@ -126,7 +128,7 @@ export default function Page() {
                   </ul>
                 </li>
                 <li>
-                  <ul role="list" className="-mx-2 space-y-1">
+                  <ul role="list" className="space-y-1">
                     {siteConfig.tagLists 
                     ? Object.keys(siteConfig.tagLists).map(key => (
                         <TextOnlyTagFilter 
@@ -135,6 +137,7 @@ export default function Page() {
                           activeTags={activeTags}
                           setActiveTags={setActiveTags}
                           setPage={setPage}
+                          filterReset={filterReset}
                         />
                     ))
                     : null }
@@ -144,8 +147,8 @@ export default function Page() {
             </nav>
           </div>
         </div>
-        <main className="py-10 grow mt-10">
-          <div className="px-4 sm:px-6 lg:px-8">
+        <main className="py-10 w-4/5 mt-10">
+          <div className="px-4 sm:px-6">
             <FeatureList activeThemes={activeThemes} activeTags={activeTags} page={page} setPage={setPage} filterReset={filterReset}/>
           </div>
         </main>

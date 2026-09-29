@@ -35,6 +35,7 @@ async function onSearch(query, items, setItems, map, center, zoom) {
             if (ids.includes(result.id) == false) {
                 let url = null
                 map.current ? url = `/feature/${result.uuid}/${result.slug}` : url = `/entries/${result.uuid}`
+                console.log(result)
                 results.push({
                     id: result.id,
                     name: result.place ? `${result.place}: ${result.name}`: `${result.name}`,
@@ -43,7 +44,8 @@ async function onSearch(query, items, setItems, map, center, zoom) {
                     uuid: result.uuid,
                     slug: result.slug,
                     headline: result.headline,
-                    coordinates: result.coordinates
+                    coordinates: result.coordinates,
+                    geom: result.geom
                 })
             }
             if (results.length > 8) {
@@ -116,7 +118,7 @@ export default function CommandPalette(props) {
               <Combobox onChange={(item) => {
                         if (map.current) {
                           // Todo: this needs to be updated to handle polygons and lines
-                          setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates})
+                          setActiveFeature({feature: item.uuid, slug: item.slug, coordinates: item.coordinates, geom: item.geom})
                           setOpen(false)
                         }
                         else {

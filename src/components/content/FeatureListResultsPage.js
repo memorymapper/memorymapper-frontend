@@ -23,13 +23,26 @@ export default function FeatureListResultsPage(props) {
         return <NotFound link='/entries/' />
     }
 
+    if (!data.features) {
+        props.setHasMore(false)
+        props.setFeatureCount(0)
+        return(<NotFound link='/entries/' />)
+    }
+
     if (data.features.length == 0) {
         props.setHasMore(false)
+        props.setFeatureCount(0)
         return(<NotFound link='/entries/' />)
     }
 
     if (data.totalPages == props.page) {
         props.setHasMore(false)
+    } else {
+        props.setHasMore(true)
+    }
+
+    if (data.featureCount) {
+        props.setFeatureCount(data.featureCount)
     }
 
     return (

@@ -25,21 +25,21 @@ export default async function AttachmentLayout({params, children}) {
         notFound()
     }
 
-    const tabs = feature.attachments.map((a, index) => (
+    const tabs = feature.attachments ? feature.attachments.map((a, index) => (
         {
             name: a.title, 
             href: '/feature/' + params.uuid + '/' + a.slug, 
             current: a.slug == params.slug ? true : false,
             color: feature.properties.color,
         }
-    ))
+    )) : null
 
     return ( 
         <div className="h-full overflow-hidden">
             <ContentPanelSelect tabs={tabs} />
             <div className="hidden sm:block">
                 <div className="border-b border-gray-200">
-                    <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                    {tabs ? <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                         {tabs.map((tab) => (
                         <Link
                             key={tab.name}
@@ -56,7 +56,7 @@ export default async function AttachmentLayout({params, children}) {
                             {tab.name}
                         </Link>
                         ))}
-                    </nav>
+                    </nav> : null}
                 </div>
             </div>
             <div className="h-5/6 overflow-auto py-7">

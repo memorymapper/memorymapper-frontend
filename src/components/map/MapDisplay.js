@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef, useEffect, useState, useContext } from 'react'
+import React, { useRef, useEffect, useState, useContext, act } from 'react'
 import { useRouter } from 'next/navigation'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -70,13 +70,22 @@ export default function MapDisplay(props) {
 
     useEffect(() => {
         if (map.current) return; // stops map from intializing more than once
+
+        let styleUrl = props.mapTilerStyle ? props.mapTilerStyle + `?key=${props.apiKey}` : `https://api.maptiler.com/maps/positron/style.json?key=${props.apiKey}`
+
+        if (props.baseMapStyleUrl != '/static/js/default_map_style.json') {
+            styleUrl = props.baseMapStyleUrl;
+        }
       
         map.current = new maplibregl.Map({
           container: mapContainer.current,
-          style: (props.mapTilerStyle ? props.mapTilerStyle + `?key=${props.apiKey}` : `https://api.maptiler.com/maps/positron/style.json?key=${props.apiKey}`),
+          style: styleUrl,
           center: props.mapCenter,
           zoom: props.mapZoom,
+          maxZoom: props.maxZoom,
+          minZoom: props.minZoom,
           doubleClickZoom: false,
+          maxPitch: 85
         })
 
         map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
@@ -196,6 +205,7 @@ export default function MapDisplay(props) {
                         source: 'interactive',
                         'source-layer': 'points',
                         type: 'symbol',
+                        minzoom: props.minZoom,
                         layout: {
                             'text-field': ['get', 'name'],
                             'text-anchor': 'left',
@@ -240,12 +250,13 @@ export default function MapDisplay(props) {
                         source: 'interactive',
                         'source-layer': 'multipoints',
                         type: 'symbol',
+                        minzoom: 13,
                         layout: {
                             'text-field': ['get', 'name'],
                             'text-anchor': 'left',
                             'text-size': 12,
                             'text-justify': 'left',
-                            'text-offset': [1, 0]
+                            'text-offset': [1, 0],
                         },
                         paint: {
                             'text-color': 'black',
@@ -335,31 +346,34 @@ export default function MapDisplay(props) {
                 // Do stuff when you click on a feature
                 map.current.on("click", e => {
                     
-                    // Because this useEffect loads with the map, activeFeature isn't populated yet, so you can't toggle the highlight. TODO: it'll do for noo, but sort out a workaround.
-
-                    /*if (activeFeature) {
-                        for (const l in contentLayers) {
-                            map.current.setFeatureState(
-                                {
-                                    source: 'interactive',
-                                    id: activeFeature.uuid,
-                                    sourceLayer: l
-
-                                },
-                                {active: false}
-                            )
-                        }
-                    }*/
-
                     const features = map.current.queryRenderedFeatures(e.point, {
                       layers: ["points", "multipoints", "points_labels", "polygons", "lines", "lines_labels"],
                     })
 
-                    if (features.length > 0) {
+                    if (features.length > 0 && features.length < 2) {
                         const uuid = features[0].properties.uuid
                         const slug = features[0].properties.attachments.split(',')[0]
-                        setActiveFeature({feature: uuid, slug: slug})
+                        const geometry = features[0].geometry
+                        setActiveFeature({feature: uuid, slug: slug, geometry: geometry})
                     }
+
+                    if (features.length > 1) {
+                        const featureIds = features.map(f => f.properties.uuid)
+                        // Features on tile boundaries get drawn multiple times, so strip out the dupes...
+                        const filteredFeatures = [...new Set(featureIds)]
+
+                        if (filteredFeatures.length == 1) {
+                            // If there is only one feature, they're dupes, so proceed as normal
+                            const uuid = features[0].properties.uuid
+                            const slug = features[0].properties.attachments.split(',')[0]
+                            const geometry = features[0].geometry
+                            setActiveFeature({feature: uuid, slug: slug, geometry: geometry})
+                        } else {
+                            // If there's multiples, then show the multiple results page
+                            router.push(`/feature/multiple/?features=${filteredFeatures.join(',')}`)
+                        }
+                    }
+
                 })
 
                 map.current.on("touchstart", e => {
@@ -373,7 +387,6 @@ export default function MapDisplay(props) {
                         setActiveFeature({feature: uuid, slug: slug})
                     }
                 })
-
 
                 // Change feature style on hover. Has to be duplicated across the three map layer types, which isn't very DRY
                 let pointHoverStateId = null
@@ -598,175 +611,84 @@ export default function MapDisplay(props) {
         // If there is an activeFeature, fly to it and load the page
         if (map.current && map.current.loaded() && activeFeature) {
             if (activeFeature.feature) {
-
-                // The following bit of logic handles results from search, as activeFeature has coordinates as it comes from the server. TODO: coordinates are returned from search interface, but maybe from page loads too? It's neater but'll need a bit of mucking about to work
-
-                // If the feature returned from anywhere other than the map is a point, indicated by the fact that the first element is a number...
-                if (activeFeature.coordinates) {
-                    if (! isNaN(activeFeature.coordinates[0])) {
-                        map.current.flyTo({center: activeFeature.coordinates, zoom: 18})
-                        router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
-                        return
+                
+                function getBounds(geom) {
+                    // returns a bounds object if a line, multipoint, or polygon; otherwise returns null for a point
+                    let coordinates = null
+                    switch(geom.type) {
+                        case 'Polygon':
+                            coordinates = geom.coordinates[0]
+                            break
+                        case 'MultiPoint':
+                            coordinates = geom.coordinates
+                            break
+                        case 'LineString':
+                            coordinates = geom.coordinates
+                            break
+                        case 'Point':
+                            coordinates = null                    
                     }
-                }
-
-                // If the feature is a line or a polygon (indcated by the first element of the coordinates array being itself an array, and therefore not a number)...
-                if (activeFeature.coordinates) {
-                    if (isNaN(activeFeature.coordinates[0])) {
-
-                        let coordinates = null
-
-                        // If there's more than one set of coordinates, it's a line. Unless it's a multipolygon. But first things first...
-                        if (activeFeature.coordinates[0].length > 1) {
-                            coordinates = activeFeature.coordinates[0]
-                        } else {
-                            coordinates = activeFeature.coordinates[0][0]
-                        }
-
+                    if (coordinates) {
                         const bounds = coordinates.reduce((bounds, coord) => {
                             return bounds.extend(coord);
                         }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]))
-    
+                        return bounds
+                    } else {
+                        return null
+                    }        
+                }
+
+                if (activeFeature.geometry) {
+                    // if there's a geometry, it's come from an interaction with the map
+                    const bounds = getBounds(activeFeature.geometry)
+                    
+                    if (bounds) {
                         map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
-                        router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
-                        map.current.setFeatureState(
-                            {
-                                source: 'interactive', 
-                                id: activeFeature.feature,
-                                sourceLayer: 'polygons'
-                            },
-                            {active: true}
-                        )
-                        return
-                    }
-                }
-
-                // Get the feature and its coordinates if clicked on from the map. TODO: Could you add the coords directly to the activeFeature on click?
-                // If you don't have the coordinates needed, find where to zoom to from the activeFeature uuid
-                const points = map.current.querySourceFeatures('interactive', {
-                    'sourceLayer': 'points',
-                    'filter': ['==', ['get', 'uuid'], activeFeature.feature]
-                })
-
-                const multipoints = map.current.querySourceFeatures('interactive', {
-                    'sourceLayer': 'multipoints',
-                    'filter': ['==', ['get', 'uuid'], activeFeature.feature]
-                })
-
-                const polygons = map.current.querySourceFeatures('interactive', {
-                    'sourceLayer': 'polygons',
-                    'filter': ['==', ['get', 'uuid'], activeFeature.feature]
-                })
-
-                const lines = map.current.querySourceFeatures('interactive', {
-                    'sourceLayer': 'lines',
-                    'filter': ['==', ['get', 'uuid'], activeFeature.feature]
-                })
-
-                if (points.length > 0) {
-                    if (props.panelSize == panelClassNames.hidden) {
-                        props.setPanelSize(panelClassNames.medium)
-                    }
-                    map.current.flyTo({center: points[0].geometry.coordinates, zoom: 18, padding: {top: 0, right: 0, bottom: 0, left: props.panelOffset }})
-                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
-                    map.current.setFeatureState(
-                        {
-                            source: 'interactive', 
-                            id: activeFeature.feature,
-                            sourceLayer: 'points'
-                        },
-                        {active: true}
-                    )
-                }
-
-                if (polygons.length > 0) {
-                    if (props.panelSize == panelClassNames.hidden) {
-                        props.setPanelSize(panelClassNames.medium)
-                    }
-                    const coordinates = polygons[0].geometry.coordinates[0]
-                    
-                    const bounds = coordinates.reduce((bounds, coord) => {
-                        return bounds.extend(coord);
-                    }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]))
-
-                    map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
-                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
-                    map.current.setFeatureState(
-                        {
-                            source: 'interactive', 
-                            id: activeFeature.feature,
-                            sourceLayer: 'polygons'
-                        },
-                        {active: true}
-                    )
-                }
-
-                if (lines.length > 0) {
-                    if (props.panelSize == panelClassNames.hidden) {
-                        props.setPanelSize(panelClassNames.medium)
-                    }
-                    const coordinates = lines[0].geometry.coordinates
-                    
-                    const bounds = coordinates.reduce((bounds, coord) => {
-                        return bounds.extend(coord);
-                    }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]))
-
-                    map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
-                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
-                    map.current.setFeatureState(
-                        {
-                            source: 'interactive', 
-                            id: activeFeature.feature,
-                            sourceLayer: 'lines'
-                        },
-                        {active: true}
-                    )
-                }
-
-                if (multipoints.length > 0) {
-                    if (props.panelSize == panelClassNames.hidden) {
-                        props.setPanelSize(panelClassNames.medium)
+                    } else {
+                        map.current.flyTo({center: activeFeature.geometry.coordinates, zoom: 18, padding: {top: 0, right: 0, bottom: 0, left: props.panelOffset }})
                     }
                     
-                    const coordinates = multipoints[0].geometry.coordinates
+                    router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
+                } else {
+                    // if it hasn't, the user has come from the url, so find the correct feature and get the geom
+                    const points = map.current.querySourceFeatures('interactive', {
+                        'sourceLayer': 'points',
+                        'filter': ['==', ['get', 'uuid'], activeFeature.feature]
+                    })
+    
+                    const multipoints = map.current.querySourceFeatures('interactive', {
+                        'sourceLayer': 'multipoints',
+                        'filter': ['==', ['get', 'uuid'], activeFeature.feature]
+                    })
+    
+                    const polygons = map.current.querySourceFeatures('interactive', {
+                        'sourceLayer': 'polygons',
+                        'filter': ['==', ['get', 'uuid'], activeFeature.feature]
+                    })
+    
+                    const lines = map.current.querySourceFeatures('interactive', {
+                        'sourceLayer': 'lines',
+                        'filter': ['==', ['get', 'uuid'], activeFeature.feature]
+                    })
 
-                    /*
-                    const bounds = coordinates.reduce((bounds, coord) => {
-                        return bounds.extend(coord);
-                    }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]))
+                    const features = [points, multipoints, polygons, lines]
+                    
+                    const feature = features.find(el => el.length > 0)[0]
 
-                    map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
-                    */
+                    // then fly to the feature, as before...
+                    const bounds = getBounds(feature.geometry)
+                    
+                    if (bounds) {
+                        map.current.fitBounds(bounds, {padding: {top: 50, right: 100, bottom: 50, left: props.panelOffset }})
+                    } else {
+                        map.current.flyTo({center: feature.geometry.coordinates, zoom: 18, padding: {top: 0, right: 0, bottom: 0, left: props.panelOffset }})
+                    }
 
                     router.push(('/feature/' + activeFeature.feature + '/' + activeFeature.slug))
-                    
-                    map.current.setFeatureState(
-                        {
-                            source: 'interactive', 
-                            id: activeFeature.feature,
-                            sourceLayer: 'multipoints'
-                        },
-                        {active: true}
-                    )
                 }
-
             }
         }
     }, [map, activeFeature, props.apiKey])
-
-
-    /*
-    useEffect(()=> {
-        if (map.current && map.current.loaded()) {
-            if (! map.current.hasControl(terrain)) {  
-                map.current.addControl(
-                    terrain
-                );
-            }
-        }
-    }, [map])
-    */
-
 
     useEffect(() => {
         // Apply the map filters when they are updated

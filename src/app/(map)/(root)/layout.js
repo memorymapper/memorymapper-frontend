@@ -41,7 +41,9 @@ export default function MapLayout({children}) {
                             panelSize={panelSize}
                             setPanelSize={setPanelSize}
                             mapCenter={[siteConfig.MAP_CENTER_LONGITUDE, siteConfig.MAP_CENTER_LATITUDE]} 
-                            mapZoom={siteConfig.ZOOM} 
+                            mapZoom={siteConfig.ZOOM}
+                            maxZoom={siteConfig.MAX_ZOOM}
+                            minZoom={siteConfig.MIN_ZOOM}
                             apiKey={siteConfig.MAPTILER_KEY} 
                             tileJson={siteConfig.TILE_JSON_URL} 
                             themes={siteConfig.themes} 
@@ -50,6 +52,8 @@ export default function MapLayout({children}) {
                             mapLayerWidget={siteConfig.MAP_LAYER_WIDGET}
                             showTerrain={siteConfig.SHOW_TERRAIN}
                             terrainExaggeration={siteConfig.TERRAIN_EXAGGERATION}
+                            mapTilerStyle={siteConfig.MAPTILER_STYLE}
+                            baseMapStyleUrl={siteConfig.BASE_MAP_STYLE_URL}
                         />
                 </main>
             </PanelOffsetContext.Provider>

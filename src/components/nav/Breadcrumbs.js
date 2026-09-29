@@ -1,11 +1,6 @@
 import { ChevronRightIcon, MapIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link'
 
-const pages = [
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Project Nero', href: '#', current: true },
-]
-
 export default function Breadcrumbs(props) {
   return (
     <nav className="flex mb-4 sm:mb-8" aria-label="Breadcrumb">
@@ -32,6 +27,7 @@ export default function Breadcrumbs(props) {
             </div>
           </li>
         ))}
+        {props.featureCount ? <li className="ml-4 text-sm font-light text-gray-500"> | Showing {props.featureCount} results</li> : null}
       </ul>
     </nav>
   )

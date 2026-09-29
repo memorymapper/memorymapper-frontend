@@ -31,8 +31,8 @@ export default function PanelLayout({children}) {
     return (
         <div className="h-full overflow-hidden">
             <div className="flex justify-between items-center h-16">
-                <h2 className='mb-0' style={{color: feature.properties.color}}>{ feature ? feature.properties.name : null }</h2>
-                <Link href={`/entries/${feature.properties.uuid}`} className='border-0'><DocumentTextIcon className='w-8 border-0' style={{color: feature.properties.color}}/></Link>
+                <h3 className='mb-0' style={{color: feature.properties.color}}>{ feature ? feature.properties.name : null }</h3>
+                {feature.properties.attachements && feature.properties.attachements.length > 0 ? <Link href={`/entries/${feature.properties.uuid}`} className='border-0'><DocumentTextIcon className='w-8 border-0' style={{color: feature.properties.color}}/></Link> : null}
             </div>
             {children}
         </div>

@@ -5,21 +5,23 @@ import FeatureListResultsPage from "./FeatureListResultsPage"
 export default function FeatureList(props) {
 
     const [hasMore, setHasMore] = useState(true)
-
+    const [featureCount, setFeatureCount] = useState(0)
+    
     const pages = []
+    
 
     for (let i=1; i <= props.page; i++) {
         if (props.filterReset) {
-            pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} key={i} />)
+            pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} key={i} setFeatureCount={setFeatureCount} />)
         } else {
-            pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} activeThemes={props.activeThemes} activeTags={props.activeTags} key={i} />)
+            pages.push(<FeatureListResultsPage page={i} setHasMore={setHasMore} activeThemes={props.activeThemes} activeTags={props.activeTags} key={i} setFeatureCount={setFeatureCount} />)
         }
     }
 
 
     return (
         <>
-            <Breadcrumbs pages={[{name: 'Entries', href: '/entries', current: true}]} />
+            <Breadcrumbs pages={[{name: 'Entries', href: '/entries', current: true}]} featureCount={featureCount} />
             <div className="grid md:grid-cols-3 gap-4">
                 {pages.length ? pages : null}
             </div>
