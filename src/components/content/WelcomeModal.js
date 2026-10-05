@@ -69,9 +69,13 @@ export default function WelcomeModal(props) {
     >
       <div className="modal fixed w-full h-full shadow top-0 left-0 flex items-center justify-center z-50 overflow-hidden bg-center" style={{'backgroundImage': 'url(' + bg +')', 'backgroundSize': 'cover'}}>
         <div className="modal-container w-full h-full z-50 overflow-hidden">
+          <video autoPlay muted loop className='w-full h-full object-cover' autoPlay muted loop playsInline>
+            <source src="https://eqxpvl7bep1d3ux7.public.blob.vercel-storage.com/arena3.mov" type="video/mp4" />
+          </video>
           <div className="modal-content mx-auto h-full text-left top-0 block absolute">
             <div className="flex flex-row justify-end items-center h-full text-white flex-wrap">
               <div className="hidden sm:w-1/2 sm:flex sm:flex-col justify-center h-full sm:h-4/5 sm:pt-28">
+                
                 <div className='mb-4 flex items-center flex-col'>
                     {
                       props.logo != 'default.png'
@@ -86,7 +90,7 @@ export default function WelcomeModal(props) {
                     }
                 </div>
               </div>
-              <div className="w-full sm:w-1/2 flex bg-black/90 p-4 h-full sm:h-4/5 items-center">
+              <div className="w-full sm:w-1/2 flex bg-black/70 p-4 h-full sm:h-4/5 items-center">
                   <div className='flex flex-col justify-center sm:pt-28 h-full'>
                     <h3 className="text-2xl mb-4">{data.title}</h3>
                     <div dangerouslySetInnerHTML={{__html: clean}} className="h-4/5 overflow-y-auto"></div>
@@ -102,7 +106,7 @@ export default function WelcomeModal(props) {
                 <div className="w-full sm:w-1/2 h-full flex items-end">
                     <span className='text-xs bg-black/60'>{desc}</span>
                 </div>
-                <div className="w-full sm:w-1/2 h-full bg-black/90"></div>
+                <div className="w-full sm:w-1/2 h-full bg-black/70"></div>
                 <div className="w-full absolute mt-0 flex justify-center">
                 <button className='hidden sm:block w-12 h-12 rounded-full bg-black' onClick={() => {
                     setShowWelcomeModal(false)
