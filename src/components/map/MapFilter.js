@@ -3,6 +3,8 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid"
 import ThemeButton from "../buttons/ThemeButton"
 import TagButton from "../buttons/TagButton"
 import ResetFilterButton from "../buttons/ResetFiltersButton"
+import ArenaSoundscapePlayer from '@/components/media/audio/ArenaSoundscapePlayer'
+
 
 
 export default function MapFilter(props) {
@@ -202,6 +204,9 @@ export default function MapFilter(props) {
                         </li>
                     </ul>
                 ) : null}
+                </div>
+                <div className="absolute bottom-0 right-2 h-12 flex items-center justify-center">
+                    <ArenaSoundscapePlayer />
                 </div>
             </div>   
         </div>

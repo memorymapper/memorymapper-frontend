@@ -9,7 +9,6 @@ import { hslToString, hexToHSL } from '@/utils/hexToHSL'
 import { MapContext } from '@/app/providers'
 import { panelClassNames } from '@/app/providers'
 
-
 export default function MapDisplay(props) {
 
     // Main map display logic...
@@ -784,7 +783,8 @@ export default function MapDisplay(props) {
                 mapLayers={activeLayers}
                 setActiveLayers={setActiveLayers}
                 mapLayerWidget={props.mapLayerWidget}
-                /*availableTagList={availableTagList}*/ />
+                /*availableTagList={availableTagList}*/ 
+            />
         </div>
     )
 }
