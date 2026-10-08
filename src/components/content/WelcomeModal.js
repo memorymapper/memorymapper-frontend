@@ -70,7 +70,7 @@ export default function WelcomeModal(props) {
       <div className="modal fixed w-full h-full shadow top-0 left-0 flex items-center justify-center z-50 overflow-hidden bg-center" style={{'backgroundImage': 'url(' + bg +')', 'backgroundSize': 'cover'}}>
         <div className="modal-container w-full h-full z-50 overflow-hidden">
           <video autoPlay muted loop className='w-full h-full object-cover' playsInline>
-            <source src="https://eqxpvl7bep1d3ux7.public.blob.vercel-storage.com/arena3.mov" type="video/mp4" />
+            <source src="https://eqxpvl7bep1d3ux7.public.blob.vercel-storage.com/arena4.mp4" type="video/mp4" />
           </video>
           <div className="modal-content mx-auto h-full text-left top-0 block absolute">
             <div className="flex flex-row justify-end items-center h-full text-white flex-wrap">
