@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef, useEffect, useState, useContext, act } from 'react'
+import React, { useRef, useEffect, useState, useContext, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -21,6 +21,13 @@ export default function MapDisplay(props) {
 
     const {activeFeature} = useContext(ActiveFeatureContext)
     const {setActiveFeature} = useContext(ActiveFeatureContext)
+    const setPanelSize = props.setPanelSize
+
+    const showPanelIfHidden = useCallback(() => {
+        setPanelSize(currentSize =>
+            currentSize === panelClassNames.hidden ? panelClassNames.medium : currentSize
+        )
+    }, [setPanelSize])
 
     const [activeThemes, setActiveThemes] = useState(props.themes)
 
@@ -350,6 +357,10 @@ export default function MapDisplay(props) {
                       layers: ["points", "multipoints", "points_labels", "polygons", "lines", "lines_labels"],
                     })
 
+                    if (features.length > 0) {
+                        showPanelIfHidden()
+                    }
+
                     if (features.length > 0 && features.length < 2) {
                         const uuid = features[0].properties.uuid
                         const slug = features[0].properties.attachments.split(',')[0]
@@ -382,6 +393,7 @@ export default function MapDisplay(props) {
                     })
                   
                     if (features.length > 0) {
+                        showPanelIfHidden()
                         const uuid = features[0].properties.uuid
                         const slug = features[0].properties.attachments.split(',')[0]
                         setActiveFeature({feature: uuid, slug: slug})
@@ -587,7 +599,7 @@ export default function MapDisplay(props) {
 
             })
         }
-    }, [map, activeFeature, activeLayers])
+    }, [map, activeFeature, activeLayers, showPanelIfHidden])
 
 
     useEffect(() => {
