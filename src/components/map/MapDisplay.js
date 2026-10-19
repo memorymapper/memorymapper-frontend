@@ -8,6 +8,7 @@ import { ActiveFeatureContext } from '@/app/providers'
 import { hslToString, hexToHSL } from '@/utils/hexToHSL'
 import { MapContext } from '@/app/providers'
 import { panelClassNames } from '@/app/providers'
+import ArenaMapControls from './ArenaMapControls'
 
 export default function MapDisplay(props) {
 
@@ -773,7 +774,7 @@ export default function MapDisplay(props) {
     return (
         <div className="w-full bg-blue-50 relative h-full">
             <div ref={mapContainer} className="map block absolute w-full h-full" />
-            <MapFilter 
+            {/* <MapFilter 
                 themes={activeThemes} 
                 tagLists={props.tagLists} 
                 activeTags={activeTags} 
@@ -783,8 +784,10 @@ export default function MapDisplay(props) {
                 mapLayers={activeLayers}
                 setActiveLayers={setActiveLayers}
                 mapLayerWidget={props.mapLayerWidget}
-                /*availableTagList={availableTagList}*/ 
+                
             />
+            */}
+            <ArenaMapControls />
         </div>
     )
 }

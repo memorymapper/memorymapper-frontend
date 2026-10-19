@@ -1,6 +1,6 @@
 'use client'
-import { Howl, Howler } from "howler"
-import { PlayIcon, PauseIcon } from "@heroicons/react/24/solid"
+import { Howl } from "howler"
+import { PlayIcon, PauseIcon } from "@heroicons/react/24/outline"
 import { useRef, useState, useEffect } from "react"
 
 export default function AudioPlayer(props) {

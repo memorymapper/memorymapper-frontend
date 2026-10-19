@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react"
 import { Howl } from 'howler'
-import { PlayIcon, PauseIcon } from "@heroicons/react/24/outline"
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline"
 
 export default function ArenaSoundscapePlayer(props) {
@@ -49,7 +48,7 @@ export default function ArenaSoundscapePlayer(props) {
     }, [])
 
     return (
-        <div className='w-6 h-6 bg-stone-50 flex items-center justify-center'>
+        <div className='w-6 h-6 flex items-center justify-center'>
             <button className='w-full h-full rounded-full' onClick={onPlayPause}>
                 {
                     playing

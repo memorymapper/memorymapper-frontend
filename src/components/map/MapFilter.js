@@ -4,6 +4,7 @@ import ThemeButton from "../buttons/ThemeButton"
 import TagButton from "../buttons/TagButton"
 import ResetFilterButton from "../buttons/ResetFiltersButton"
 import ArenaSoundscapePlayer from '@/components/media/audio/ArenaSoundscapePlayer'
+import ShowSplashScreenButton from "@/components/media/audio/ShowSplashScreenButton"
 
 
 
@@ -207,6 +208,7 @@ export default function MapFilter(props) {
                 </div>
                 <div className="absolute bottom-0 right-2 h-12 flex items-center justify-center">
                     <ArenaSoundscapePlayer />
+                    <ShowSplashScreenButton />
                 </div>
             </div>   
         </div>

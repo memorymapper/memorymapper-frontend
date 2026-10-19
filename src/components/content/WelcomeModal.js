@@ -97,7 +97,7 @@ export default function WelcomeModal(props) {
                     <div className='sm:hidden w-full flex justify-center'>
                       <button className='w-12 h-12 rounded-full' onClick={() => {
                           setShowWelcomeModal(false)
-                        }}><ChevronDownIcon className='text-white' />
+                        }}>Enter
                       </button>
                     </div>
                   </div>
@@ -108,9 +108,9 @@ export default function WelcomeModal(props) {
                 </div>
                 <div className="w-full sm:w-1/2 h-full bg-black/70"></div>
                 <div className="w-full absolute mt-0 flex justify-center">
-                <button className='hidden sm:block w-12 h-12 rounded-full bg-black' onClick={() => {
+                <button className='hidden sm:block w-16 h-16 rounded-full bg-black' onClick={() => {
                     setShowWelcomeModal(false)
-                  }}><ChevronDownIcon className='text-white' />
+                  }}><span className="text-pink-400 font-semibold">Enter</span>
                 </button>
                 </div>
               </div> 
